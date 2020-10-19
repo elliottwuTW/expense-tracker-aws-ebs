@@ -10,9 +10,10 @@ db.once('open', () => {
 
   // seed data
   const promise = []
-  categories.forEach(category => {
+  categories.forEach((category, index) => {
     promise.push(Category.create({
       title: category.title,
+      value: category.value,
       icon: category.icon
     }))
   })

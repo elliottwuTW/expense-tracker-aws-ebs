@@ -1,5 +1,5 @@
 <div class="container mt-4">
-  <form action="/filter" method="POST">
+  <form action="/filter">
     <div class="row">
       <div class="col-6">
         總金額
@@ -8,17 +8,11 @@
       <div class="col-6">
         <div class="d-flex justify-content-end">
           <div class="filter-option">
-            <select class="custom-select" onchange="this.form.submit()" name="option">
-              {{!-- {{#each options}}
-              <option value="{{@key}}" {{#ifEquals ../targetOption @key}} selected {{/ifEquals}}>
-                {{this.text}}</option>
-              {{/each}} --}}
-              <option value="all" selected>全部</option>
-              <option value="home">家居物業</option>
-              <option value="traffic">交通出行</option>
-              <option value="entertainment">休閒娛樂</option>
-              <option value="food">餐飲食品</option>
-              <option value="else">其他</option>
+            <select class="custom-select" onchange="this.form.submit()" name="category">
+              {{#each categories}}
+              <option value="{{this.value}}" {{#ifEquals ../targetCategory this.value}} selected {{/ifEquals}}>
+                {{this.title}}</option>
+              {{/each}}
             </select>
           </div>
         </div>
@@ -32,7 +26,7 @@
     <li class="list-group-item">
       <div class="row">
         <div class="col-auto mr-auto">
-          {{this.category}}
+          {{{ this.categoryIcon }}}
           {{this.name}}
           {{this.date}}
           {{this.amount}}
