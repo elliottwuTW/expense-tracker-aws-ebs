@@ -2,6 +2,8 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
 
+require('./config/mongoose.js')
+
 // app
 const app = express()
 
