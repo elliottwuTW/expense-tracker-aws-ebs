@@ -12,18 +12,16 @@ db.once('open', () => {
   // seed data
   records.forEach(record => {
     Category.findOne({ title: record.category })
-      .then(recordCategory => {
+      .then(categoryInfo => {
         return Record.create({
-          categoryValue: recordCategory.value,
-          categoryIcon: recordCategory.icon,
+          categoryValue: categoryInfo.value,
+          categoryIcon: categoryInfo.icon,
           name: record.name,
           date: record.date,
           amount: record.amount
         })
       })
-      .catch(err => {
-        console.error(err)
-      })
+      .catch(err => console.error(err))
   })
 
   console.log('The record seeds created successfully!')

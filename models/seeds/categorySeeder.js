@@ -17,7 +17,7 @@ db.once('open', () => {
       icon: category.icon
     }))
   })
-  // waiting for all promised to be finished and disconnect db
+  // waiting for all promise to be finished and disconnect db
   Promise.all(promise)
     .then(() => db.close())
     .then(() => console.log('The category seeds created successfully!'))
