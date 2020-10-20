@@ -14,6 +14,7 @@ db.once('open', () => {
     Category.findOne({ title: record.category })
       .then(categoryInfo => {
         return Record.create({
+          categoryTitle: categoryInfo.title,
           categoryValue: categoryInfo.value,
           categoryIcon: categoryInfo.icon,
           name: record.name,

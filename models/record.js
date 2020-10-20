@@ -7,6 +7,10 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const recordSchema = new Schema({
   // define data
+  categoryTitle: {
+    type: String,
+    required: true
+  },
   categoryValue: {
     type: String,
     required: true
