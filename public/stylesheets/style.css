@@ -1,0 +1,23 @@
+.add-btn-anchor {
+  position: relative;
+  outline: none;
+}
+
+.add-btn {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, calc(-50% + 29px));
+
+  width: 1.5em;
+  height: 1.5em;
+  border: none;
+  border-radius: 50%;
+  background: #f5d142;
+  color: #fff;
+  font-size: 1.5em;
+}
+
+.add-btn:hover {
+  background: #f5c542;
+}

@@ -15,6 +15,11 @@ router.get('/', (req, res) => {
       Record.find()
         .lean()
         .then(records => {
+          // date transformation
+          records.forEach(record => {
+            record.date = record.date.toISOString().slice(0, 10)
+          })
+
           res.render('index', { totalAmount: calculateTotalAmount(records), categories, targetCategory: 'all', records })
         })
     })
