@@ -2,6 +2,7 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 const methodOverride = require('method-override')
 
 require('./config/mongoose.js')
@@ -25,6 +26,7 @@ app.set('view engine', 'hbs')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 app.use(express.static('public'))
+app.use(cookieParser('expense-tracker'))
 
 // routing
 app.use(routes)
