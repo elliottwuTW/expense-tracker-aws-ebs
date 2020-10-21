@@ -4,10 +4,10 @@ const router = express.Router()
 const Record = require('../../models/record.js')
 const Category = require('../../models/category.js')
 
-const getFilterCondition = require('../../models/getFilterCondition.js')
-const getPeriodRecords = require('../../models/getPeriodRecords.js')
-const getDuration = require('../../models/getDuration.js')
-const renderRecords = require('../../views/renderRecords.js')
+const getFilterCondition = require('../../models/functions/getFilterCondition.js')
+const getPeriodRecords = require('../../models/functions/getPeriodRecords.js')
+const getDuration = require('../../models/functions/getDuration.js')
+const renderRecords = require('../../views/functions/renderRecords.js')
 
 // root
 router.get('/', (req, res) => {

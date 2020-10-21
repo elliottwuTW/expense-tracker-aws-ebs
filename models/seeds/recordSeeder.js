@@ -2,7 +2,7 @@
  * Create the expense items by default
  */
 const db = require('../../config/mongoose.js')
-const records = require('../records.json')
+const records = require('../data/records.json')
 const Record = require('../record.js')
 const Category = require('../category.js')
 

@@ -2,7 +2,7 @@
  * Set the default categories
  */
 const db = require('../../config/mongoose.js')
-const categories = require('../categories.json')
+const categories = require('../data/categories.json')
 const Category = require('../category.js')
 
 db.once('open', () => {
