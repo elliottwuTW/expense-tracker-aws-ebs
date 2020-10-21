@@ -2,7 +2,7 @@
 An expense tracker app that can manage your wallet.
 
 ### Main Page
-![]()
+![](https://raw.githubusercontent.com/elliottwuTW/expense-tracker-app/master/project_picture.png)
 
 ### Features
 User can
@@ -14,6 +14,8 @@ User can
 - delete a specific expense record
 - keep their filter setting after returning to the main page
 
+### Demo
+[廣志の私帳](https://salty-mountain-97514.herokuapp.com/)
 
 ### Quick Start
 ```
