@@ -2,39 +2,50 @@ const express = require('express')
 
 const Record = require('../../models/record.js')
 const Category = require('../../models/category.js')
-const calculateTotalAmount = require('../../models/calculateTotalAmount.js')
+
+const getPeriodRecords = require('../../models/getPeriodRecords.js')
+const getDuration = require('../../models/getDuration.js')
+const renderRecords = require('../../views/renderRecords.js')
 
 const router = express.Router()
 
 router.get('/', (req, res) => {
-  const category = req.query.category
+  const { period, sort, category } = req.query
+  let findCondition = {}
+  let sortCondition = {}
 
   Category.find()
     .lean()
-    .then(categories => {
+    .sort({ _id: 'asc' })
+    .then(categoryObjs => {
       if (category === 'all') {
-        Record.find()
-          .lean()
-          .then(records => {
-            // date transformation
-            records.forEach(record => {
-              record.date = record.date.toISOString().slice(0, 10)
-            })
-
-            res.render('index', { totalAmount: calculateTotalAmount(records), categories, targetCategory: category, records })
-          })
+        findCondition = {}
       } else {
-        Record.find({ categoryValue: category })
-          .lean()
-          .then(records => {
-            // date transformation
-            records.forEach(record => {
-              record.date = record.date.toISOString().slice(0, 10)
-            })
-
-            res.render('index', { totalAmount: calculateTotalAmount(records), categories, targetCategory: category, records })
-          })
+        findCondition = { categoryValue: category }
       }
+      // set sort condition
+      switch (sort) {
+        case 'date':
+          sortCondition = { date: 'desc' }
+          break
+
+        case 'amount':
+          sortCondition = { amount: 'desc' }
+          break
+
+        default:
+          sortCondition = { date: 'desc' }
+          break
+      }
+
+      Record.find(findCondition)
+        .lean()
+        .sort(sortCondition)
+        .then(records => {
+          const duration = getDuration(period)
+          records = getPeriodRecords(records, period)
+          renderRecords(res, records, categoryObjs, category, sort, period, duration)
+        })
     })
 })
 

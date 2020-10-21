@@ -1,35 +1,41 @@
+{{!-- 顯示總金額、設定篩選條件 --}}
 <form action="/filter">
-  <div class="row">
-    <div class="col-auto mr-auto my-2">
-      <span>總金額:</span>
-      <h3 style="display: inline;">{{totalAmount}}</h3>
+  <div class="row my-3">
+    <div class="col-auto mr-auto d-flex align-items-center">
+      <span class="mr-2">總支出: </span>
+      <h2 style="color: #c0392b; display: inline;"> {{totalAmount}}</h2>
     </div>
+    {{!-- 期間 --}}
     <div class="col-auto">
       <div class="d-flex align-items-center">
         <i class="far fa-clock mx-2"></i>
         <select class="custom-select" onchange="this.form.submit()" name="period">
-          <option value="today">今天</option>
-          <option value="recentMonth">最近一個月</option>
-          <option value="recentHalfYear">最近半年</option>
-          <option value="recentYear">最近一年</option>
+          {{#each periodList}}
+          <option value="{{@key}}" {{#ifEquals ../period @key}} selected {{/ifEquals}}>
+            {{this}}</option>
+          {{/each}}
         </select>
       </div>
     </div>
+    {{!-- 排序 --}}
     <div class="col-auto">
       <div class="d-flex align-items-center">
         <i class="fas fa-sort-amount-down mx-2"></i>
         <select class="custom-select" onchange="this.form.submit()" name="sort">
-          <option value="date">日期</option>
-          <option value="amount">金額</option>
+          {{#each sortList}}
+          <option value="{{@key}}" {{#ifEquals ../sort @key}} selected {{/ifEquals}}>
+            {{this}}</option>
+          {{/each}}
         </select>
       </div>
     </div>
+    {{!-- 類別 --}}
     <div class="col-auto">
       <div class="d-flex align-items-center">
         <i class="fas fa-tag mx-2"></i>
         <select class="custom-select" onchange="this.form.submit()" name="category">
-          {{#each categories}}
-          <option value="{{this.value}}" {{#ifEquals ../targetCategory this.value}} selected {{/ifEquals}}>
+          {{#each categoryObjs}}
+          <option value="{{this.value}}" {{#ifEquals ../category this.value}} selected {{/ifEquals}}>
             {{this.title}}</option>
           {{/each}}
         </select>
@@ -38,14 +44,21 @@
   </div>
 </form>
 
-{{!-- expense items --}}
+<div class="d-flex align-items-center mb-2">
+  <div class="mr-2">📅</div>
+  <h5 class="m-0">{{duration}}</h5>
+</div>
+
+{{!-- 支出列表 --}}
+{{#if records}}
 <ul class="list-group">
   {{#each records}}
   <li class="list-group-item">
     <div class="row">
       <div class="col-sm-7 mr-auto">
         <div class="row">
-          <div class="d-flex flex-column justify-content-center align-items-center" style="width: 50px;">
+          <div class="d-flex flex-column justify-content-center align-items-center"
+            style="width: 50px; transform: scale(0.9);">
             {{{ this.categoryIcon }}}</div>
           <div class="col-auto mr-auto">
             <div class="row" style="font-size: 1.1em;">{{ this.name }}</div>
@@ -63,7 +76,8 @@
         <a class="btn btn-outline-secondary mx-2" href="./records/{{ this._id }}/edit" style="border: none;">
           <i class="far fa-edit"></i>
         </a>
-        <form action="./records/{{ this._id }}?_method=DELETE" method="POST" style="display: inline;">
+        <form action="./records/{{ this._id }}?_method=DELETE" method="POST" onsubmit="return deleteCheck()"
+          style="display: inline;">
           <button class="btn btn-outline-danger" type="submit" style="border: none;">
             <i class="far fa-trash-alt"></i>
           </button>
@@ -73,3 +87,8 @@
   </li>
   {{/each}}
 </ul>
+{{else}}
+<div class="d-flex justify-content-center mt-5">
+  <h4>成功守住錢包 🤑</h4>
+</div>
+{{/if}}

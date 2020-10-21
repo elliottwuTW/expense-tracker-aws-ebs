@@ -1,26 +1,28 @@
 const express = require('express')
 const router = express.Router()
 
-// model
 const Record = require('../../models/record.js')
 const Category = require('../../models/category.js')
 
-const calculateTotalAmount = require('../../models/calculateTotalAmount.js')
+const getPeriodRecords = require('../../models/getPeriodRecords.js')
+const getDuration = require('../../models/getDuration.js')
+const renderRecords = require('../../views/renderRecords.js')
 
 // root
 router.get('/', (req, res) => {
   Category.find()
     .lean()
-    .then(categories => {
+    .sort({ _id: 'asc' })
+    .then(categoryObjs => {
       Record.find()
         .lean()
         .then(records => {
-          // date transformation
-          records.forEach(record => {
-            record.date = record.date.toISOString().slice(0, 10)
-          })
-
-          res.render('index', { totalAmount: calculateTotalAmount(records), categories, targetCategory: 'all', records })
+          const category = 'all'
+          const sort = 'date'
+          const period = 'recentYear'
+          const duration = getDuration(period)
+          records = getPeriodRecords(records, period)
+          renderRecords(res, records, categoryObjs, category, sort, period, duration)
         })
     })
 })

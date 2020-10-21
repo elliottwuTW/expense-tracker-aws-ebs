@@ -7,26 +7,26 @@
   {
     "title": "家居物業",
     "value": "home",
-    "icon": "<i class='fas fa-home'></i>"
+    "icon": "<i class='fas fa-home fa-2x'></i>"
   },
   {
     "title": "交通出行",
     "value": "traffic",
-    "icon": "<i class='fas fa-shuttle-van'></i>"
+    "icon": "<i class='fas fa-shuttle-van fa-2x'></i>"
   },
   {
     "title": "休閒娛樂",
     "value": "entertainment",
-    "icon": "<i class='fas fa-grin-beam'></i>"
+    "icon": "<i class='fas fa-grin-beam fa-2x'></i>"
   },
   {
     "title": "餐飲食品",
     "value": "food",
-    "icon": "<i class='fas fa-utensils'></i>"
+    "icon": "<i class='fas fa-utensils fa-2x'></i>"
   },
   {
     "title": "其他",
     "value": "else",
-    "icon": "<i class='fas fa-pen'></i>"
+    "icon": "<i class='fas fa-pen fa-2x'></i>"
   }
 ]
