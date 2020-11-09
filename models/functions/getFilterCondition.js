@@ -1,4 +1,4 @@
-function getFilterCondtion(filterObj) {
+function getFilterCondition(filterObj) {
   // read from filterObj
   const query = filterObj.query
   const category = (query === undefined ? null : query.category) || 'all'
@@ -24,4 +24,4 @@ function getFilterCondtion(filterObj) {
   return { findCondition, sortCondition, period, sort, category }
 }
 
-module.exports = getFilterCondtion
+module.exports = getFilterCondition
