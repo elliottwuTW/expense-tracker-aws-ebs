@@ -11,7 +11,7 @@ const renderRecords = require('../../views/functions/renderRecords.js')
 
 // root
 router.get('/', (req, res) => {
-  const { findCondition, sortCondition, period, sort, category } = getFilterCondition(req.cookies)
+  const { findCondition, sortCondition, period, sort, category } = getFilterCondition(req.session.query)
 
   Category.find()
     .lean()

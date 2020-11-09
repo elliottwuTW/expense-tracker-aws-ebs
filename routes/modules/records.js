@@ -4,6 +4,32 @@ const router = express.Router()
 const Record = require('../../models/record.js')
 const Category = require('../../models/category.js')
 
+const getFilterCondition = require('../../models/functions/getFilterCondition.js')
+const getPeriodRecords = require('../../models/functions/getPeriodRecords.js')
+const getDuration = require('../../models/functions/getDuration.js')
+const renderRecords = require('../../views/functions/renderRecords.js')
+
+router.get('/filter', (req, res) => {
+  const { findCondition, sortCondition, period, sort, category } = getFilterCondition(req.query)
+
+  Category.find()
+    .lean()
+    .sort({ _id: 'asc' })
+    .then(categoryObjs => {
+      Record.find(findCondition)
+        .lean()
+        .sort(sortCondition)
+        .then(records => {
+          const duration = getDuration(period)
+          records = getPeriodRecords(records, period)
+          renderRecords(res, records, categoryObjs, category, sort, period, duration)
+        })
+    })
+
+  // save setting to session
+  req.session.query = { period, sort, category }
+})
+
 // create-record page
 router.get('/new', (req, res) => {
   Category.find()
