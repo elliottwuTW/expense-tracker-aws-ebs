@@ -5,8 +5,10 @@ const router = express.Router()
 const home = require('./modules/home.js')
 const records = require('./modules/records.js')
 const users = require('./modules/users')
+const fbAuth = require('./modules/fbAuth')
 
 // Routing
+router.use('/auth/facebook', fbAuth)
 router.use('/users', users)
 router.use('/records', records)
 router.use('/', home)

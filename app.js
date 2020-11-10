@@ -5,6 +5,12 @@ const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 const session = require('express-session')
 const flash = require('connect-flash')
+const dotenv = require('dotenv')
+
+// Environment vars
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config()
+}
 
 require('./config/mongoose.js')
 const routes = require('./routes/index.js')
@@ -12,8 +18,7 @@ const usePassport = require('./config/passport')
 
 // settings
 const app = express()
-const PORT = process.env.PORT || 3000
-const URL = process.env.PORT ? 'https://salty-mountain-97514.herokuapp.com' : 'http://localhost:'
+const PORT = process.env.PORT
 
 app.engine('hbs', exphbs({
   defaultLayout: 'layout',
@@ -30,7 +35,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 app.use(express.static('public'))
 app.use(session({
-  secret: 'expense-tracker',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true
 }))
@@ -49,5 +54,5 @@ app.use(routes)
 
 // start and listen to the server
 app.listen(PORT, () => {
-  console.log(`The server is running on ${URL}${PORT}!`)
+  console.log(`The server is running on ${PORT}!`)
 })
