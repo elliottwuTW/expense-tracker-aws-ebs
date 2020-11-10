@@ -1,9 +1,11 @@
+const getTodayMonth = require('./getTodayMonth')
+
 function getFilterCondition(user, filterObj) {
   // read from filterObj
   const query = filterObj
   const category = (query === undefined ? null : query.category) || 'all'
   const sort = (query === undefined ? null : query.sort) || 'date'
-  const period = (query === undefined ? null : query.period) || 'recentYear'
+  const period = (query === undefined ? null : query.period) || getTodayMonth()
 
   const findCondition =
     category === 'all'

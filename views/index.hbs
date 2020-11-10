@@ -1,4 +1,5 @@
 {{!-- 顯示總金額、設定篩選條件 --}}
+
 {{> message}}
 <form action="/records/filter">
   <div class="row my-3">
@@ -10,12 +11,7 @@
     <div class="col-auto">
       <div class="d-flex align-items-center">
         <i class="far fa-clock mx-2"></i>
-        <select class="custom-select" onchange="this.form.submit()" name="period">
-          {{#each periodList}}
-          <option value="{{@key}}" {{#ifEquals ../period @key}} selected {{/ifEquals}}>
-            {{this}}</option>
-          {{/each}}
-        </select>
+        <input type="month" class="custom-select" name="period" value="{{this.period}}" onchange="this.form.submit()">
       </div>
     </div>
     {{!-- 排序 --}}

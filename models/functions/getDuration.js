@@ -2,38 +2,18 @@
  * return the time duration
  */
 function getDuration(period) {
-  const todayDate = new Date()
-  const fromDate = new Date()
+  const minDate = new Date(period)
 
-  // set the start month
-  if (period !== 'today') {
-    let monthNum = Number(todayDate.toISOString().slice(5, 7)) - 1
-    switch (period) {
-      case 'recentMonth':
-        monthNum -= 1
-        break
-
-      case 'recentHalfYear':
-        monthNum -= 6
-        break
-
-      case 'recentYear':
-        monthNum -= 12
-        break
-
-      default:
-        break
-    }
-    fromDate.setMonth(monthNum)
-  }
+  const maxDate = new Date(period)
+  maxDate.setMonth(maxDate.getMonth() + 1)
+  maxDate.setDate(maxDate.getDate() - 1)
 
   // date transformation
-  let duration = todayDate.toISOString().slice(0, 10)
-  if (period !== 'today') {
-    duration = `${fromDate.toISOString().slice(0, 10)}` + ' ~ ' + todayDate.toISOString().slice(0, 10)
-  }
-
-  return duration
+  return (
+    `${minDate.toISOString().slice(0, 10)}` +
+    ' ~ ' +
+    `${maxDate.toISOString().slice(0, 10)}`
+  )
 }
 
 module.exports = getDuration
