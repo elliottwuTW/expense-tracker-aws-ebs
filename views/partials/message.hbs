@@ -1,3 +1,4 @@
+{{!-- 註冊訊息 --}}
 {{#each registerErrors}}
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
   {{this.msg}}
@@ -6,3 +7,21 @@
   </button>
 </div>
 {{/each}}
+
+{{!-- 登入訊息 --}}
+{{#if login_error}}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  {{login_error}}
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{{/if}}
+{{#if login_success}}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  {{login_success}}
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{{/if}}
