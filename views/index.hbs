@@ -62,7 +62,7 @@
             style="width: 50px; transform: scale(0.9);">
             {{{ this.categoryIcon }}}</div>
           <div class="col-auto mr-auto">
-            <div class="row" style="font-size: 1.1em;">{{ this.name }}</div>
+            <div class="row" style="font-size: large;">{{ this.name }} / {{ this.merchant }}</div>
             <div class="row">
               <small>{{ this.date }}</small>
             </div>
@@ -74,10 +74,10 @@
 
       </div>
       <div class="col-sm-5 d-flex align-items-center justify-content-end">
-        <a class="btn btn-outline-secondary mx-2" href="./records/{{ this._id }}/edit" style="border: none;">
+        <a class="btn btn-outline-secondary mx-2" href="/records/{{ this._id }}/edit" style="border: none;">
           <i class="far fa-edit"></i>
         </a>
-        <form action="./records/{{ this._id }}?_method=DELETE" method="POST" onsubmit="return deleteCheck()"
+        <form action="/records/{{ this._id }}?_method=DELETE" method="POST" onsubmit="return deleteCheck()"
           style="display: inline;">
           <button class="btn btn-outline-danger" type="submit" style="border: none;">
             <i class="far fa-trash-alt"></i>

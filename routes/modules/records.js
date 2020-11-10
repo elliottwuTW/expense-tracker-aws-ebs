@@ -10,106 +10,114 @@ const getDuration = require('../../models/functions/getDuration.js')
 const renderRecords = require('../../views/functions/renderRecords.js')
 
 router.get('/filter', (req, res) => {
-  const { findCondition, sortCondition, period, sort, category } = getFilterCondition(req.query)
+  const {
+    findCondition,
+    sortCondition,
+    period,
+    sort,
+    category,
+  } = getFilterCondition(req.user, req.query)
 
   Category.find()
     .lean()
     .sort({ _id: 'asc' })
-    .then(categoryObjs => {
+    .then((categoryObjs) => {
       Record.find(findCondition)
         .lean()
         .sort(sortCondition)
-        .then(records => {
+        .then((records) => {
           const duration = getDuration(period)
           records = getPeriodRecords(records, period)
-          renderRecords(res, records, categoryObjs, category, sort, period, duration)
+          renderRecords(
+            res,
+            records,
+            categoryObjs,
+            category,
+            sort,
+            period,
+            duration
+          )
         })
     })
-
   // save setting to session
   req.session.query = { period, sort, category }
 })
 
-// create-record page
 router.get('/new', (req, res) => {
   Category.find()
     .lean()
     .sort({ _id: 'asc' })
-    .then(categories => {
+    .then((categories) => {
       // remove 'all' option
       categories.shift()
-      res.render('new', { categories: categories.map(category => category.title) })
+      res.render('new', {
+        categories: categories.map((category) => category.title),
+      })
     })
 })
-// add a record
+
 router.post('/', (req, res) => {
-  const { name, date, category, amount } = req.body
+  const { name, date, category, merchant, amount } = req.body
 
   Category.findOne({ title: category })
-    .then(categoryInfo => {
+    .then((categoryInfo) => {
       return Record.create({
         categoryTitle: categoryInfo.title,
         categoryValue: categoryInfo.value,
         categoryIcon: categoryInfo.icon,
         name,
         date,
-        amount
+        merchant,
+        amount,
+        userId: req.user._id,
       })
     })
     .then(res.redirect('/'))
-    .catch(err => console.error(err))
+    .catch((err) => console.error(err))
 })
-// modify-record page
-router.get('/:id/edit', (req, res) => {
-  const recordID = req.params.id
 
+router.get('/:id/edit', (req, res) => {
   Category.find()
     .lean()
     .sort({ _id: 'asc' })
-    .then(categories => {
+    .then((categories) => {
       // remove 'all' option
       categories.shift()
-      Record.findById(recordID)
+      Record.findOne({ _id: req.params.id, userId: req.user._id })
         .lean()
-        .then(record => {
+        .then((record) => {
           res.render('edit', {
             record,
             date: record.date.toISOString().slice(0, 10), // yyyy-mm-dd
-            categories: categories.map(category => category.title)
+            categories: categories.map((category) => category.title),
           })
         })
     })
 })
-// edit a record
+
 router.put('/:id', (req, res) => {
-  const recordID = req.params.id
-  const { name, date, category, amount } = req.body
+  Record.findOne({ _id: req.params.id, userId: req.user._id })
+    .then((record) =>
+      Category.findOne({ title: req.body.category }).then((categoryInfo) => {
+        delete req.body.category
+        Object.assign(record, req.body)
 
-  Record.findById(recordID)
-    .then(record => {
-      record.name = name
-      record.date = date
-      record.amount = amount
-      // change the category items
-      Category.findOne({ title: category })
-        .then(categoryInfo => {
-          record.categoryTitle = categoryInfo.title
-          record.categoryValue = categoryInfo.value
-          record.categoryIcon = categoryInfo.icon
-          record.save()
-        })
-    })
+        record.categoryTitle = categoryInfo.title
+        record.categoryValue = categoryInfo.value
+        record.categoryIcon = categoryInfo.icon
+
+        return record.save()
+      })
+    )
     .then(res.redirect('/'))
-    .catch(err => console.error(err))
+    .catch((err) => console.error(err))
 })
-// delete a record
-router.delete('/:id', (req, res) => {
-  const recordID = req.params.id
 
-  Record.findById(recordID)
-    .then(record => record.remove())
+router.delete('/:id', (req, res) => {
+  Record.findOne({ _id: req.params.id, userId: req.user._id })
+    .then((record) => record.remove())
     .then(res.redirect('/'))
-    .catch(err => console.error(err))
+    .catch((err) => console.error(err))
 })
 
 module.exports = router

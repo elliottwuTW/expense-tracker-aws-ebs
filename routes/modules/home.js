@@ -11,19 +11,33 @@ const renderRecords = require('../../views/functions/renderRecords.js')
 
 // root
 router.get('/', (req, res) => {
-  const { findCondition, sortCondition, period, sort, category } = getFilterCondition(req.session.query)
+  const {
+    findCondition,
+    sortCondition,
+    period,
+    sort,
+    category,
+  } = getFilterCondition(req.user, req.session.query)
 
   Category.find()
     .lean()
     .sort({ _id: 'asc' })
-    .then(categoryObjs => {
+    .then((categoryObjs) => {
       Record.find(findCondition)
         .lean()
         .sort(sortCondition)
-        .then(records => {
+        .then((records) => {
           const duration = getDuration(period)
           records = getPeriodRecords(records, period)
-          renderRecords(res, records, categoryObjs, category, sort, period, duration)
+          renderRecords(
+            res,
+            records,
+            categoryObjs,
+            category,
+            sort,
+            period,
+            duration
+          )
         })
     })
 })

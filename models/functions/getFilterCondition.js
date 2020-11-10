@@ -1,11 +1,14 @@
-function getFilterCondition(filterObj) {
+function getFilterCondition(user, filterObj) {
   // read from filterObj
   const query = filterObj
   const category = (query === undefined ? null : query.category) || 'all'
   const sort = (query === undefined ? null : query.sort) || 'date'
   const period = (query === undefined ? null : query.period) || 'recentYear'
 
-  const findCondition = category === 'all' ? {} : { categoryValue: category }
+  const findCondition =
+    category === 'all'
+      ? { userId: user._id }
+      : { categoryValue: category, userId: user._id }
 
   let sortCondition = {}
   switch (sort) {
