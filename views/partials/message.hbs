@@ -25,3 +25,23 @@
   </button>
 </div>
 {{/if}}
+
+{{!-- 登出訊息 --}}
+{{#if logout_success}}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  {{logout_success}}
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{{/if}}
+
+{{!-- 權限管理訊息 --}}
+{{#if access_warning}}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  {{access_warning}}
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{{/if}}
