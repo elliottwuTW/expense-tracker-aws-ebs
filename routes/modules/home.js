@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
     sortCondition,
     period,
     sort,
-    category,
+    category
   } = getFilterCondition(req.user, req.session.query)
 
   Category.find()

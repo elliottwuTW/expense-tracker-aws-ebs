@@ -15,7 +15,7 @@ router.get('/filter', (req, res) => {
     sortCondition,
     period,
     sort,
-    category,
+    category
   } = getFilterCondition(req.user, req.query)
 
   Category.find()
@@ -51,7 +51,7 @@ router.get('/new', (req, res) => {
       // remove 'all' option
       categories.shift()
       res.render('new', {
-        categories: categories.map((category) => category.title),
+        categories: categories.map((category) => category.title)
       })
     })
 })
@@ -69,7 +69,7 @@ router.post('/', (req, res) => {
         date,
         merchant,
         amount,
-        userId: req.user._id,
+        userId: req.user._id
       })
     })
     .then(res.redirect('/'))
@@ -89,7 +89,7 @@ router.get('/:id/edit', (req, res) => {
           res.render('edit', {
             record,
             date: record.date.toISOString().slice(0, 10), // yyyy-mm-dd
-            categories: categories.map((category) => category.title),
+            categories: categories.map((category) => category.title)
           })
         })
     })

@@ -20,25 +20,32 @@ const usePassport = require('./config/passport')
 const app = express()
 const PORT = process.env.PORT
 
-app.engine('hbs', exphbs({
-  defaultLayout: 'layout',
-  extname: '.hbs',
-  helpers: {
-    ifEquals: function (targetItem, iteratedItem, options) {
-      return (targetItem === iteratedItem) ? options.fn(this) : options.inverse(this)
+app.engine(
+  'hbs',
+  exphbs({
+    defaultLayout: 'layout',
+    extname: '.hbs',
+    helpers: {
+      ifEquals: function (targetItem, iteratedItem, options) {
+        return targetItem === iteratedItem
+          ? options.fn(this)
+          : options.inverse(this)
+      }
     }
-  }
-}))
+  })
+)
 app.set('view engine', 'hbs')
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 app.use(express.static('public'))
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true
-}))
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true
+  })
+)
 
 usePassport(app)
 // Flash message
