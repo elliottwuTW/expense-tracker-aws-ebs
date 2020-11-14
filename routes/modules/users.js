@@ -10,10 +10,13 @@ router.get('/login', (req, res) => {
   res.render('login')
 })
 
-router.post('/login', passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/users/login'
-}))
+router.post(
+  '/login',
+  passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/users/login'
+  })
+)
 
 router.get('/logout', (req, res) => {
   req.logout()
@@ -35,7 +38,9 @@ router.post('/register', (req, res) => {
     registerErrors.push({ msg: 'Email not valid' })
   }
   if (password.length < 8) {
-    registerErrors.push({ msg: 'Password can not be shorter than 8 characters' })
+    registerErrors.push({
+      msg: 'Password can not be shorter than 8 characters'
+    })
   }
   if (password !== confirmPassword) {
     registerErrors.push({ msg: 'Please check the passwords' })
@@ -45,25 +50,26 @@ router.post('/register', (req, res) => {
     return res.render('register', { registerErrors, name, email })
   }
 
-  User.findOne({ email })
-    .then(user => {
-      if (user) {
-        registerErrors.push({ msg: 'Email is already registered' })
-        return res.render('register', { registerErrors, name, email })
-      }
+  User.findOne({ email }).then((user) => {
+    if (user) {
+      registerErrors.push({ msg: 'Email is already registered' })
+      return res.render('register', { registerErrors, name, email })
+    }
 
-      // Create an user
-      bcrypt
-        .genSalt(10)
-        .then(salt => bcrypt.hash(password, salt))
-        .then(hash => User.create({
+    // Create an user
+    bcrypt
+      .genSalt(10)
+      .then((salt) => bcrypt.hash(password, salt))
+      .then((hash) =>
+        User.create({
           name,
           email,
           password: hash
-        }))
-        .then(_ => res.redirect('/users/login'))
-        .catch(err => console.error(err))
-    })
+        })
+      )
+      .then((_) => res.redirect('/users/login'))
+      .catch((err) => console.error(err))
+  })
 })
 
 module.exports = router
