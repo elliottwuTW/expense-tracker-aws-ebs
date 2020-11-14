@@ -9,38 +9,38 @@ const recordSchema = new Schema({
   // define data
   categoryTitle: {
     type: String,
-    required: true,
+    required: true
   },
   categoryValue: {
     type: String,
-    required: true,
+    required: true
   },
   categoryIcon: {
     type: String,
-    required: true,
+    required: true
   },
   name: {
     type: String,
-    required: true,
+    required: true
   },
   date: {
     type: Date,
-    required: true,
+    required: true
   },
   amount: {
     type: Number,
-    required: true,
+    required: true
   },
   merchant: {
     type: String,
-    required: true,
+    required: true
   },
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     index: true,
-    required: true,
-  },
+    required: true
+  }
 })
 
 // model

@@ -11,21 +11,16 @@ const db = require('../../config/mongoose.js')
 const categories = require('../data/categories.json')
 const Category = require('../category.js')
 
-db.once('open', () => {
-  console.log('Ready for category seeds!')
+db.once('open', async () => {
+  try {
+    console.log('Ready for category seeds!')
 
-  const seederPromise = (data) => {
-    return new Promise((resolve, reject) => {
-      if (data) {
-        resolve(Category.insertMany(data))
-      } else {
-        reject(new Error('seed data not found'))
-      }
-    })
+    await Category.insertMany(categories)
+    await db.close()
+
+    console.log('Category seeds created successfully!')
+    process.exit()
+  } catch (err) {
+    console.error(err)
   }
-
-  seederPromise(categories)
-    .then((promise) => db.close())
-    .then(() => console.log('Category seeds created successfully!'))
-    .catch((err) => console.error(err))
 })
