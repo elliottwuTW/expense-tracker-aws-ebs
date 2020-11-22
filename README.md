@@ -26,6 +26,11 @@ User can
 
 [廣志の私帳](https://ac-expense-tracker.herokuapp.com/)
 
+### Mock Account
+
+- email: user@example.com
+- password: 12345678
+
 ### Quick Start
 
 ```
