@@ -57,26 +57,14 @@ module.exports = (app) => {
         const { name, email } = profile._json
 
         User.findOne({ email }).then((user) => {
-          if (user)
-            return done(
-              null,
-              user,
-              req.flash('login_success', 'Login successfully')
+          if (user) {
+            return done(null, user, req.flash('login_success', 'Login successfully')
             )
+          }
 
           // Create an account
-          const randomPassword = Math.random().toString(36).slice(-8)
-          bcrypt
-            .genSalt(10)
-            .then((salt) => bcrypt.hash(randomPassword, salt))
-            .then((hash) =>
-              User.create({
-                name,
-                email,
-                password: hash
-              })
-            )
-            .then(() =>
+          User.create({ name, email, password: Math.random().toString(36).slice(-8) })
+            .then((user) =>
               done(null, user, req.flash('login_success', 'Login successfully'))
             )
             .catch((err) => done(err, null))

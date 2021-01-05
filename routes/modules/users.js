@@ -1,15 +1,16 @@
 const express = require('express')
 const router = express.Router()
 
-const bcrypt = require('bcryptjs')
 const passport = require('passport')
 
 const User = require('../../models/user')
 
+// Login Page
 router.get('/login', (req, res) => {
   res.render('login')
 })
 
+// Login
 router.post(
   '/login',
   passport.authenticate('local', {
@@ -18,16 +19,19 @@ router.post(
   })
 )
 
+// Logout
 router.get('/logout', (req, res) => {
   req.logout()
   req.flash('logout_success', 'Logout successfully')
   res.redirect('/users/login')
 })
 
+// Register Page
 router.get('/register', (req, res) => {
   res.render('register')
 })
 
+// Register
 router.post('/register', (req, res) => {
   const name = req.body.name || ''
   const { email, password, confirmPassword } = req.body
@@ -57,16 +61,7 @@ router.post('/register', (req, res) => {
     }
 
     // Create an user
-    bcrypt
-      .genSalt(10)
-      .then((salt) => bcrypt.hash(password, salt))
-      .then((hash) =>
-        User.create({
-          name,
-          email,
-          password: hash
-        })
-      )
+    User.create({ name, email, password })
       .then((_) => res.redirect('/users/login'))
       .catch((err) => console.error(err))
   })
