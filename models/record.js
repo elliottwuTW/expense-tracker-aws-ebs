@@ -7,18 +7,6 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const recordSchema = new Schema({
   // define data
-  categoryTitle: {
-    type: String,
-    required: true
-  },
-  categoryValue: {
-    type: String,
-    required: true
-  },
-  categoryIcon: {
-    type: String,
-    required: true
-  },
   name: {
     type: String,
     required: true
@@ -33,6 +21,12 @@ const recordSchema = new Schema({
   },
   merchant: {
     type: String,
+    required: true
+  },
+  categoryId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Category',
+    index: true,
     required: true
   },
   userId: {
