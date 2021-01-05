@@ -31,8 +31,8 @@ const importData = () => {
         const category = await Category.findOne({
           title: record.category
         })
-        record.categoryId = category._id
-        record.userId = user._id
+        record.category = category._id
+        record.user = user._id
         return record
       }))
       await Record.insertMany(recordPromise)

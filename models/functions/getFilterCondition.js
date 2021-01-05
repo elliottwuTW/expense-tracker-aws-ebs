@@ -9,8 +9,8 @@ function getFilterCondition(user, filterObj) {
 
   const findCondition =
     category === 'all'
-      ? { userId: user._id }
-      : { categoryValue: category, userId: user._id }
+      ? { user: user._id }
+      : { category, user: user._id }
 
   let sortCondition = {}
   switch (sort) {

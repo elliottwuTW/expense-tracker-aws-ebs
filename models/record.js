@@ -23,13 +23,13 @@ const recordSchema = new Schema({
     type: String,
     required: true
   },
-  categoryId: {
+  category: {
     type: Schema.Types.ObjectId,
     ref: 'Category',
     index: true,
     required: true
   },
-  userId: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     index: true,

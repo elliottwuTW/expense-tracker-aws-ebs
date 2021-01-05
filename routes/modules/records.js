@@ -22,7 +22,7 @@ router.get('/', (req, res) => {
     .lean()
     .sort({ _id: 'asc' })
     .then((categoryObjs) => {
-      Record.find(findCondition)
+      Record.find(findCondition).populate('category')
         .lean()
         .sort(sortCondition)
         .then((records) => {
@@ -69,7 +69,7 @@ router.post('/', (req, res) => {
         date,
         merchant,
         amount,
-        userId: req.user._id
+        user: req.user._id
       })
     })
     .then(res.redirect('/'))
@@ -83,7 +83,7 @@ router.get('/:id/edit', (req, res) => {
     .then((categories) => {
       // remove 'all' option
       categories.shift()
-      Record.findOne({ _id: req.params.id, userId: req.user._id })
+      Record.findOne({ _id: req.params.id, user: req.user._id })
         .lean()
         .then((record) => {
           res.render('edit', {
@@ -96,7 +96,7 @@ router.get('/:id/edit', (req, res) => {
 })
 
 router.put('/:id', (req, res) => {
-  Record.findOne({ _id: req.params.id, userId: req.user._id })
+  Record.findOne({ _id: req.params.id, user: req.user._id })
     .then((record) =>
       Category.findOne({ title: req.body.category }).then((categoryInfo) => {
         delete req.body.category
@@ -114,7 +114,7 @@ router.put('/:id', (req, res) => {
 })
 
 router.delete('/:id', (req, res) => {
-  Record.findOne({ _id: req.params.id, userId: req.user._id })
+  Record.findOne({ _id: req.params.id, user: req.user._id })
     .then((record) => record.remove())
     .then(res.redirect('/'))
     .catch((err) => console.error(err))
