@@ -9,7 +9,7 @@ const getPeriodRecords = require('../../models/functions/getPeriodRecords.js')
 const getDuration = require('../../models/functions/getDuration.js')
 const renderRecords = require('../../views/functions/renderRecords.js')
 
-router.get('/filter', (req, res) => {
+router.get('/', (req, res) => {
   const {
     findCondition,
     sortCondition,

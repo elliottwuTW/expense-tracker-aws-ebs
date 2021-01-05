@@ -1,21 +1,16 @@
 /**
  * respond a render of filtered records
  */
-const calculateTotalAmount = require('../../models/functions/calculateTotalAmount')
 const sortList = require('../../models/data/sorts.json')
 
-function renderRecords(
-  res,
-  records,
-  categoryObjs,
-  category,
-  sort,
-  period,
-  duration
-) {
-  res.render('index', {
+module.exports = (res, records, categoryObjs, category, sort, period, duration) => {
+  const totalAmount = records.reduce((acc, cur, index, arr) => {
+    cur = arr[index].amount
+    return acc + cur
+  }, 0)
+  return res.render('index', {
     records,
-    totalAmount: calculateTotalAmount(records),
+    totalAmount,
     categoryObjs,
     category,
     sortList,
@@ -24,5 +19,3 @@ function renderRecords(
     duration
   })
 }
-
-module.exports = renderRecords
