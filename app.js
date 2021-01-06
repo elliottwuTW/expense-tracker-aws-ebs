@@ -38,6 +38,12 @@ app.use(localVar)
 
 app.use(routes)
 
+// Error handling
+app.use((err, req, res, next) => {
+  console.error(err)
+  return res.status(500).render('error')
+})
+
 // start and listen to the server
 app.listen(PORT, () => {
   console.log(`The server is running on ${PORT}!`)

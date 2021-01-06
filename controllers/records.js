@@ -3,7 +3,7 @@ const Category = require('../models/category.js')
 const sorts = require('../data/sorts.json')
 
 // Get monthly records
-exports.getMonthlyRecords = (req, res) => {
+exports.getMonthlyRecords = (req, res, next) => {
   Category.find()
     .lean()
     .sort({ _id: 'asc' })
@@ -31,11 +31,11 @@ exports.getMonthlyRecords = (req, res) => {
         duration: res.views.duration
       })
     })
-    .catch((err) => console.error(err))
+    .catch(next)
 }
 
 // Get the page that create a new record
-exports.getNewRecordPage = (req, res) => {
+exports.getNewRecordPage = (req, res, next) => {
   Category.find()
     .lean()
     .sort({ _id: 'asc' })
@@ -46,11 +46,11 @@ exports.getNewRecordPage = (req, res) => {
         categories: categories.map((category) => category.title)
       })
     })
-    .catch((err) => console.error(err))
+    .catch(next)
 }
 
 // Add a record
-exports.createRecord = (req, res) => {
+exports.createRecord = (req, res, next) => {
   const { name, date, categoryTitle, merchant, amount } = req.body
   Category.findOne({ title: categoryTitle })
     .then((category) => {
@@ -64,28 +64,28 @@ exports.createRecord = (req, res) => {
       })
     })
     .then(res.redirect('/'))
-    .catch((err) => console.error(err))
+    .catch(next)
 }
 
 // Get the page that has a specific record
-exports.getRecordPage = (req, res) => {
+exports.getRecordPage = (req, res, next) => {
   Category.find()
     .lean()
     .sort({ _id: 'asc' })
     .then((categories) => {
       // remove 'all' option
       categories.shift()
-      Record.findOne({ _id: req.params.id, user: req.user._id })
+      return Record.findOne({ _id: req.params.id, user: req.user._id })
         .lean()
         .then((record) => {
-          res.render('edit', { record, categories })
+          return res.render('edit', { record, categories })
         })
     })
-    .catch((err) => console.error(err))
+    .catch(next)
 }
 
 // Update a record
-exports.updateRecord = (req, res) => {
+exports.updateRecord = (req, res, next) => {
   Category.findOne({ title: req.body.categoryTitle })
     .then((category) => {
       // add category attribute to req.body
@@ -97,13 +97,13 @@ exports.updateRecord = (req, res) => {
       })
     })
     .then(res.redirect('/'))
-    .catch((err) => console.error(err))
+    .catch(next)
 }
 
 // Delete a record
-exports.deleteRecord = (req, res) => {
+exports.deleteRecord = (req, res, next) => {
   Record.findOne({ _id: req.params.id, user: req.user._id })
     .then((record) => record.remove())
     .then(res.redirect('/'))
-    .catch((err) => console.error(err))
+    .catch(next)
 }

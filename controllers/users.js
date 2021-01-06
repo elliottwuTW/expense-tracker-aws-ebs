@@ -18,7 +18,7 @@ exports.getRegisterPage = (req, res) => {
 }
 
 // Register
-exports.register = (req, res) => {
+exports.register = (req, res, next) => {
   const name = req.body.name || ''
   const { email, password, confirmPassword } = req.body
 
@@ -40,15 +40,17 @@ exports.register = (req, res) => {
     return res.render('register', { registerErrors, name, email })
   }
 
-  User.findOne({ email }).then((user) => {
-    if (user) {
-      registerErrors.push({ msg: 'Email is already registered' })
-      return res.render('register', { registerErrors, name, email })
-    }
+  User.findOne({ email })
+    .then((user) => {
+      if (user) {
+        registerErrors.push({ msg: 'Email is already registered' })
+        return res.render('register', { registerErrors, name, email })
+      }
 
-    // Create an user
-    User.create({ name, email, password })
-      .then((_) => res.redirect('/users/login'))
-      .catch((err) => console.error(err))
-  })
+      // Create an user
+      return User.create({ name, email, password })
+        .then((_) => res.redirect('/users/login'))
+        .catch(next)
+    })
+    .catch(next)
 }
