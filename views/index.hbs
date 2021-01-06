@@ -20,7 +20,7 @@
         <i class="fas fa-sort-amount-down mx-2"></i>
         <select class="custom-select" onchange="this.form.submit()" name="sort">
           {{#each sorts}}
-          <option value="{{@key}}" {{#ifEquals ../sort @key}} selected {{/ifEquals}}>
+          <option value="{{@key}}" {{#if (equal ../sort @key)}} selected {{/if}}>
             {{this}}</option>
           {{/each}}
         </select>
@@ -30,9 +30,9 @@
     <div class="col-auto">
       <div class="d-flex align-items-center">
         <i class="fas fa-tag mx-2"></i>
-        <select class="custom-select" onchange="this.form.submit()" name="category">
+        <select class="custom-select" onchange="this.form.submit()" name="categoryValue">
           {{#each categories}}
-          <option value="{{this.value}}" {{#ifEquals ../category this.value}} selected {{/ifEquals}}>
+          <option value="{{this.value}}" {{#if (equal ../categoryValue this.value)}} selected {{/if}}>
             {{this.title}}</option>
           {{/each}}
         </select>

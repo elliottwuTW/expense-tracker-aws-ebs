@@ -1,10 +1,12 @@
+// format date in YYYY-MM-DD
+const formatDate = (utcDate) => utcDate.toISOString().slice(0, 10)
+
 module.exports = {
-  ifEquals: function (targetItem, iteratedItem, options) {
-    return targetItem === iteratedItem
-      ? options.fn(this)
-      : options.inverse(this)
+  equal: (a, b) => {
+    if (typeof a !== 'undefined' && typeof b !== 'undefined') {
+      return a.toString() === b.toString()
+    }
   },
-  formatDate: (utcDate) => utcDate.toISOString().slice(0, 10),
-  formatDuration: (duration) => `${duration.minDate.toISOString().slice(0, 10)}` +
-      ' ~ ' + `${duration.maxDate.toISOString().slice(0, 10)}`
+  formatDate,
+  formatDuration: (duration) => `${formatDate(duration.minDate)}` + ' ~ ' + `${formatDate(duration.maxDate)}`
 }

@@ -8,7 +8,7 @@ module.exports = (model, populate) => (req, res, next) => {
 
   // read the setting
   const period = req.query.period || (req.session.query ? req.session.query.period : null) || getThisMonth()
-  const category = req.query.category || (req.session.query ? req.session.query.category : null)
+  const categoryValue = req.query.categoryValue || (req.session.query ? req.session.query.categoryValue : null)
   const sort = req.query.sort || (req.session.query ? req.session.query.sort : null)
 
   // period
@@ -16,7 +16,7 @@ module.exports = (model, populate) => (req, res, next) => {
   conditions.date = { $gte: minDate, $lte: maxDate }
 
   // category
-  Category.findOne({ value: category })
+  Category.findOne({ value: categoryValue })
     .lean()
     .then(category => {
       if (category !== null && category.value !== 'all') {
@@ -35,7 +35,7 @@ module.exports = (model, populate) => (req, res, next) => {
       // for rendering
       res.views = {}
       res.views.period = period
-      res.views.category = category
+      res.views.categoryValue = categoryValue
       res.views.sort = sort
       res.views.duration = { minDate, maxDate }
 
