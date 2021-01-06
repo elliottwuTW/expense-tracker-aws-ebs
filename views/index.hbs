@@ -19,7 +19,7 @@
       <div class="d-flex align-items-center">
         <i class="fas fa-sort-amount-down mx-2"></i>
         <select class="custom-select" onchange="this.form.submit()" name="sort">
-          {{#each sortList}}
+          {{#each sorts}}
           <option value="{{@key}}" {{#ifEquals ../sort @key}} selected {{/ifEquals}}>
             {{this}}</option>
           {{/each}}
@@ -31,7 +31,7 @@
       <div class="d-flex align-items-center">
         <i class="fas fa-tag mx-2"></i>
         <select class="custom-select" onchange="this.form.submit()" name="category">
-          {{#each categoryObjs}}
+          {{#each categories}}
           <option value="{{this.value}}" {{#ifEquals ../category this.value}} selected {{/ifEquals}}>
             {{this.title}}</option>
           {{/each}}
@@ -43,7 +43,7 @@
 
 <div class="d-flex align-items-center mb-2">
   <div class="mr-2">📅</div>
-  <h5 class="m-0">{{duration}}</h5>
+  <h5 class="m-0">{{formatDuration duration}}</h5>
 </div>
 
 {{!-- 支出列表 --}}
@@ -60,7 +60,7 @@
           <div class="col-auto mr-auto">
             <div class="row" style="font-size: large;">{{ this.name }} / {{ this.merchant }}</div>
             <div class="row">
-              <small>{{ this.date }}</small>
+              <small>{{ formatDate this.date }}</small>
             </div>
           </div>
           <div class="col-auto d-flex flex-column justify-content-center">

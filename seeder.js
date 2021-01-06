@@ -5,8 +5,8 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const db = require('./config/mongoose.js')
-const categories = require('./_data/categories.json')
-const records = require('./_data/records.json')
+const categories = require('./data/categories.json')
+const records = require('./data/_records.json')
 const Category = require('./models/category.js')
 const Record = require('./models/record.js')
 const User = require('./models/user.js')

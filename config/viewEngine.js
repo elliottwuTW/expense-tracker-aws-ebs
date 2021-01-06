@@ -1,4 +1,5 @@
 const exphbs = require('express-handlebars')
+const helpers = require('../utils/exphbsHelper')
 
 module.exports = (app) => {
   app.engine(
@@ -6,13 +7,7 @@ module.exports = (app) => {
     exphbs({
       defaultLayout: 'layout',
       extname: '.hbs',
-      helpers: {
-        ifEquals: function (targetItem, iteratedItem, options) {
-          return targetItem === iteratedItem
-            ? options.fn(this)
-            : options.inverse(this)
-        }
-      }
+      helpers
     })
   )
   app.set('view engine', 'hbs')

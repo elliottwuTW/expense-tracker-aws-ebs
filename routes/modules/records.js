@@ -4,43 +4,38 @@ const router = express.Router()
 const Record = require('../../models/record.js')
 const Category = require('../../models/category.js')
 
-const getFilterCondition = require('../../models/functions/getFilterCondition.js')
-const getPeriodRecords = require('../../models/functions/getPeriodRecords.js')
-const getDuration = require('../../models/functions/getDuration.js')
-const renderRecords = require('../../views/functions/renderRecords.js')
+const sorts = require('../../data/sorts.json')
 
-router.get('/', (req, res) => {
-  const {
-    findCondition,
-    sortCondition,
-    period,
-    sort,
-    category
-  } = getFilterCondition(req.user, req.query)
+const query = require('../../middleware/query')
 
+router.get('/', query(Record, 'category'), (req, res) => {
   Category.find()
     .lean()
     .sort({ _id: 'asc' })
-    .then((categoryObjs) => {
-      Record.find(findCondition).populate('category')
-        .lean()
-        .sort(sortCondition)
-        .then((records) => {
-          const duration = getDuration(period)
-          records = getPeriodRecords(records, period)
-          renderRecords(
-            res,
-            records,
-            categoryObjs,
-            category,
-            sort,
-            period,
-            duration
-          )
-        })
+    .then((categories) => {
+      const records = res.queryResult
+      const totalAmount = records.reduce((acc, cur, index, arr) => {
+        cur = arr[index].amount
+        return acc + cur
+      }, 0)
+
+      const period = res.views.period
+      const category = res.views.category || 'all'
+      const sort = res.views.sort || 'date'
+      // save setting to session
+      req.session.query = { period, category, sort }
+
+      return res.render('index', {
+        records,
+        totalAmount,
+        categories,
+        category,
+        sorts,
+        sort,
+        period,
+        duration: res.views.duration
+      })
     })
-  // save setting to session
-  req.session.query = { period, sort, category }
 })
 
 router.get('/new', (req, res) => {
@@ -96,19 +91,15 @@ router.get('/:id/edit', (req, res) => {
 })
 
 router.put('/:id', (req, res) => {
-  Record.findOne({ _id: req.params.id, user: req.user._id })
-    .then((record) =>
-      Category.findOne({ title: req.body.category }).then((categoryInfo) => {
-        delete req.body.category
-        Object.assign(record, req.body)
-
-        record.categoryTitle = categoryInfo.title
-        record.categoryValue = categoryInfo.value
-        record.categoryIcon = categoryInfo.icon
-
-        return record.save()
+  Category.findOne({ title: req.body.category })
+    .then((category) => {
+      req.body.category = category._id
+      return Record.findOneAndUpdate({ _id: req.params.id, user: req.user._id }, req.body, {
+        new: true,
+        runValidators: true,
+        useFindAndModify: false
       })
-    )
+    })
     .then(res.redirect('/'))
     .catch((err) => console.error(err))
 })
