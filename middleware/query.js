@@ -7,9 +7,9 @@ module.exports = (model, populate) => (req, res, next) => {
   const conditions = {}
 
   // read the setting
-  const period = req.query.period || (req.session.query ? req.session.query.period : null) || getThisMonth()
-  const categoryValue = req.query.categoryValue || (req.session.query ? req.session.query.categoryValue : null)
-  const sort = req.query.sort || (req.session.query ? req.session.query.sort : null)
+  const period = req.query.period || (req.cookies.history ? req.cookies.history.period : null) || getThisMonth()
+  const categoryValue = req.query.categoryValue || (req.cookies.history ? req.cookies.history.categoryValue : null)
+  const sort = req.query.sort || (req.cookies.history ? req.cookies.history.sort : null)
 
   // period
   const { minDate, maxDate } = getDateRange(period)
@@ -22,7 +22,6 @@ module.exports = (model, populate) => (req, res, next) => {
       if (category !== null && category.value !== 'all') {
         conditions.category = category._id
       }
-
       // model query
       const query = model.find(conditions).populate(populate).lean()
 
