@@ -9,6 +9,13 @@ exports.getMonthlyRecords = (req, res, next) => {
     .sort({ _id: 'asc' })
     .then((categories) => {
       const records = res.queryResult
+
+      const period = res.views.period
+      const categoryValue = res.views.categoryValue || 'all'
+      const sort = res.views.sort || 'date'
+      // save setting to cookie
+      res.cookie('history', { period, categoryValue, sort })
+
       if (req.xhr) {
         // ajax request
         return res.json({
@@ -21,12 +28,6 @@ exports.getMonthlyRecords = (req, res, next) => {
           cur = arr[index].amount
           return acc + cur
         }, 0)
-
-        const period = res.views.period
-        const categoryValue = res.views.categoryValue || 'all'
-        const sort = res.views.sort || 'date'
-        // save setting to session
-        req.session.query = { period, categoryValue, sort }
 
         return res.render('index', {
           records,

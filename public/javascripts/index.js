@@ -1,6 +1,5 @@
 const apiURL = '/records'
 
-const recordPanel = getElem('#record-panel')
 const filterForm = getElem('#filter')
 const totalAmount = getElem('.total-amount')
 const duration = getElem('.duration')
@@ -109,6 +108,7 @@ function formatDate (date) {
 
 // render records out
 function renderRecords (records) {
+  const recordPanel = getElem('#record-panel')
   recordPanel.innerHTML = ''
   if (!records.length) {
     recordPanel.innerHTML = `
