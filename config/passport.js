@@ -1,10 +1,28 @@
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const FacebookStrategy = require('passport-facebook').Strategy
+const GoogleStrategy = require('passport-google-oauth20').Strategy
 
 const bcrypt = require('bcryptjs')
-
 const User = require('../models/user')
+
+// verified function with third-party returned information
+const verifiedFunction = (req, accessToken, refreshToken, profile, done) => {
+  const { name, email } = profile._json
+  User.findOne({ email }).then((user) => {
+    if (user) {
+      return done(null, user, req.flash('login_success', 'Login successfully')
+      )
+    }
+
+    // Create an account
+    User.create({ name, email, password: Math.random().toString(36).slice(-8) })
+      .then((user) =>
+        done(null, user, req.flash('login_success', 'Login successfully'))
+      )
+      .catch((err) => done(err, null))
+  })
+}
 
 module.exports = (app) => {
   // Initialize
@@ -42,23 +60,20 @@ module.exports = (app) => {
         passReqToCallback: true,
         profileFields: ['email', 'displayName']
       },
-      (req, accessToken, refreshToken, profile, done) => {
-        const { name, email } = profile._json
-
-        User.findOne({ email }).then((user) => {
-          if (user) {
-            return done(null, user, req.flash('login_success', 'Login successfully')
-            )
-          }
-
-          // Create an account
-          User.create({ name, email, password: Math.random().toString(36).slice(-8) })
-            .then((user) =>
-              done(null, user, req.flash('login_success', 'Login successfully'))
-            )
-            .catch((err) => done(err, null))
-        })
-      }
+      verifiedFunction
+    )
+  )
+  // Google Strategy
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: process.env.GOOGLE_CALLBACK,
+        passReqToCallback: true,
+        profileFields: ['email', 'displayName']
+      },
+      verifiedFunction
     )
   )
   // Session

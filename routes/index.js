@@ -2,14 +2,14 @@ const express = require('express')
 const router = express.Router()
 
 // Include the route modules
-const records = require('./modules/records.js')
+const records = require('./modules/records')
 const users = require('./modules/users')
-const fbAuth = require('./modules/fbAuth')
+const auth = require('./modules/auth')
 
 const authenticator = require('../middleware/auth')
 
 // Routing
-router.use('/auth/facebook', fbAuth)
+router.use('/auth', auth)
 router.use('/users', users)
 router.use('/records', authenticator, records)
 router.use('/', (req, res) => res.redirect('/records'))

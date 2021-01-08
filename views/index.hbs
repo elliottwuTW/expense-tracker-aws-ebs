@@ -1,24 +1,24 @@
 {{!-- 顯示總金額、設定篩選條件 --}}
 
 {{> message}}
-<form action="/records">
+<form id="filter">
   <div class="row my-3">
     <div class="col-auto mr-auto d-flex align-items-center">
       <span class="mr-2">總支出: </span>
-      <h2 style="color: #c0392b; display: inline;"> {{totalAmount}}</h2>
+      <h2 class="total-amount" style="color: #c0392b; display: inline;"> {{totalAmount}}</h2>
     </div>
     {{!-- 期間 --}}
     <div class="col-auto">
       <div class="d-flex align-items-center">
         <i class="far fa-clock mx-2"></i>
-        <input type="month" class="custom-select" name="period" value="{{this.period}}" onchange="this.form.submit()">
+        <input type="month" class="custom-select" name="period" value="{{this.period}}">
       </div>
     </div>
     {{!-- 排序 --}}
     <div class="col-auto">
       <div class="d-flex align-items-center">
         <i class="fas fa-sort-amount-down mx-2"></i>
-        <select class="custom-select" onchange="this.form.submit()" name="sort">
+        <select class="custom-select" name="sort">
           {{#each sorts}}
           <option value="{{@key}}" {{#if (equal ../sort @key)}} selected {{/if}}>
             {{this}}</option>
@@ -30,7 +30,7 @@
     <div class="col-auto">
       <div class="d-flex align-items-center">
         <i class="fas fa-tag mx-2"></i>
-        <select class="custom-select" onchange="this.form.submit()" name="categoryValue">
+        <select class="custom-select" name="categoryValue">
           {{#each categories}}
           <option value="{{this.value}}" {{#if (equal ../categoryValue this.value)}} selected {{/if}}>
             {{this.title}}</option>
@@ -43,14 +43,14 @@
 
 <div class="d-flex align-items-center mb-2">
   <div class="mr-2">📅</div>
-  <h5 class="m-0">{{formatDuration duration}}</h5>
+  <h5 class="m-0 duration">{{formatDuration duration}}</h5>
 </div>
 
 {{!-- 支出列表 --}}
-{{#if records}}
-<ul class="list-group">
+<ul class="list-group" id="record-panel">
+  {{#if records}}
   {{#each records}}
-  <li class="list-group-item">
+  <li class="list-group-item" id="record" data-id={{ this._id }}>
     <div class="row">
       <div class="col-sm-7 mr-auto">
         <div class="row">
@@ -63,7 +63,7 @@
               <small>{{ formatDate this.date }}</small>
             </div>
           </div>
-          <div class="col-auto d-flex flex-column justify-content-center">
+          <div class="col-auto d-flex flex-column justify-content-center amount" data-amount={{ this.amount }}>
             NT {{ this.amount }}
           </div>
         </div>
@@ -73,8 +73,7 @@
         <a class="btn btn-outline-secondary mx-2" href="/records/{{ this._id }}/edit" style="border: none;">
           <i class="far fa-edit"></i>
         </a>
-        <form action="/records/{{ this._id }}?_method=DELETE" method="POST" onsubmit="return deleteCheck()"
-          style="display: inline;">
+        <form class="delete" onsubmit="deleteCheck()" style="display: inline;">
           <button class="btn btn-outline-danger" type="submit" style="border: none;">
             <i class="far fa-trash-alt"></i>
           </button>
@@ -83,9 +82,9 @@
     </div>
   </li>
   {{/each}}
+  {{else}}
+  <div class="d-flex justify-content-center mt-5">
+    <h4>成功守住錢包 🤑</h4>
+  </div>
+  {{/if}}
 </ul>
-{{else}}
-<div class="d-flex justify-content-center mt-5">
-  <h4>成功守住錢包 🤑</h4>
-</div>
-{{/if}}

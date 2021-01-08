@@ -9,27 +9,37 @@ exports.getMonthlyRecords = (req, res, next) => {
     .sort({ _id: 'asc' })
     .then((categories) => {
       const records = res.queryResult
-      const totalAmount = records.reduce((acc, cur, index, arr) => {
-        cur = arr[index].amount
-        return acc + cur
-      }, 0)
 
       const period = res.views.period
       const categoryValue = res.views.categoryValue || 'all'
       const sort = res.views.sort || 'date'
-      // save setting to session
-      req.session.query = { period, categoryValue, sort }
+      // save setting to cookie
+      res.cookie('history', { period, categoryValue, sort })
 
-      return res.render('index', {
-        records,
-        totalAmount,
-        categories,
-        categoryValue,
-        sorts,
-        sort,
-        period,
-        duration: res.views.duration
-      })
+      if (req.xhr) {
+        // ajax request
+        return res.json({
+          status: 'success',
+          data: { records }
+        })
+      } else {
+        // browser request
+        const totalAmount = records.reduce((acc, cur, index, arr) => {
+          cur = arr[index].amount
+          return acc + cur
+        }, 0)
+
+        return res.render('index', {
+          records,
+          totalAmount,
+          categories,
+          categoryValue,
+          sorts,
+          sort,
+          period,
+          duration: res.views.duration
+        })
+      }
     })
     .catch(next)
 }
@@ -43,6 +53,7 @@ exports.getNewRecordPage = (req, res, next) => {
       // remove 'all' option
       categories.shift()
       return res.render('new', {
+        today: new Date(),
         categories: categories.map((category) => category.title)
       })
     })
@@ -104,6 +115,6 @@ exports.updateRecord = (req, res, next) => {
 exports.deleteRecord = (req, res, next) => {
   Record.findOne({ _id: req.params.id, user: req.user._id })
     .then((record) => record.remove())
-    .then(res.redirect('/'))
+    .then(() => res.json({ status: 'success' }))
     .catch(next)
 }
