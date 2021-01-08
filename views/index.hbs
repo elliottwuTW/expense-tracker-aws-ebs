@@ -5,7 +5,7 @@
   <div class="row my-3">
     <div class="col-auto mr-auto d-flex align-items-center">
       <span class="mr-2">總支出: </span>
-      <h2 style="color: #c0392b; display: inline;"> {{totalAmount}}</h2>
+      <h2 class="total-amount" style="color: #c0392b; display: inline;"> {{totalAmount}}</h2>
     </div>
     {{!-- 期間 --}}
     <div class="col-auto">
@@ -43,7 +43,7 @@
 
 <div class="d-flex align-items-center mb-2">
   <div class="mr-2">📅</div>
-  <h5 class="m-0">{{formatDuration duration}}</h5>
+  <h5 class="m-0 duration">{{formatDuration duration}}</h5>
 </div>
 
 {{!-- 支出列表 --}}
@@ -63,7 +63,7 @@
               <small>{{ formatDate this.date }}</small>
             </div>
           </div>
-          <div class="col-auto d-flex flex-column justify-content-center">
+          <div class="col-auto d-flex flex-column justify-content-center amount" data-amount={{ this.amount }}>
             NT {{ this.amount }}
           </div>
         </div>
@@ -73,7 +73,7 @@
         <a class="btn btn-outline-secondary mx-2" href="/records/{{ this._id }}/edit" style="border: none;">
           <i class="far fa-edit"></i>
         </a>
-        <form class="delete" onsubmit="return deleteCheck()" style="display: inline;">
+        <form class="delete" onsubmit="deleteCheck()" style="display: inline;">
           <button class="btn btn-outline-danger" type="submit" style="border: none;">
             <i class="far fa-trash-alt"></i>
           </button>
