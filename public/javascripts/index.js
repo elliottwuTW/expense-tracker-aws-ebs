@@ -1,22 +1,28 @@
 const apiURL = '/records'
 
+const recordPanel = getElem('#record-panel')
 const filterForm = getElem('#filter')
 const totalAmount = getElem('.total-amount')
 const duration = getElem('.duration')
 
 document.addEventListener('DOMContentLoaded', function () {
   // delete the record
-  document.querySelectorAll('#record').forEach(item => {
-    item.addEventListener('submit', function (e) {
-      e.preventDefault()
-
-      if (e.target.classList.contains('delete')) {
-        const id = item.dataset.id
+  if (recordPanel) {
+    // event delegation
+    recordPanel.addEventListener('click', function (event) {
+      let confirmDelete
+      if (event.target.classList.contains('delete')) {
+        confirmDelete = deleteCheck()
+      }
+      if (confirmDelete) {
+        // the nearest record
+        const record = event.target.closest('.record')
+        const recordId = record.dataset.id
         // DELETE request
-        axios.delete(`${apiURL}/${id}`)
+        axios.delete(`${apiURL}/${recordId}`)
           .then(response => {
             if (response.data.status === 'success') {
-              this.remove()
+              record.remove()
               updateTotalAmount()
             } else {
               alert('刪除失敗')
@@ -25,10 +31,11 @@ document.addEventListener('DOMContentLoaded', function () {
           .catch(err => console.error(err))
       }
     })
-  })
+  }
+
   // filter the records
   if (filterForm) {
-    filterForm.addEventListener('change', function (e) {
+    filterForm.addEventListener('change', function (event) {
       const period = getElem("[name='period']").value
       const sort = getElem("[name='sort']").value
       const categoryValue = getElem("[name='categoryValue']").value
@@ -52,10 +59,9 @@ document.addEventListener('DOMContentLoaded', function () {
 /**
  * Functions
  */
-
 // confirm the delete action
 function deleteCheck () {
-  window.confirm('確認要刪除這個支出?')
+  return window.confirm('確認要刪除這個支出?')
 }
 
 // get element
@@ -108,7 +114,6 @@ function formatDate (date) {
 
 // render records out
 function renderRecords (records) {
-  const recordPanel = getElem('#record-panel')
   recordPanel.innerHTML = ''
   if (!records.length) {
     recordPanel.innerHTML = `
@@ -118,7 +123,7 @@ function renderRecords (records) {
   } else {
     records.forEach(record => {
       recordPanel.innerHTML += `
-      <li class="list-group-item" id="record" data-id=${record._id}>
+      <li class="list-group-item record" data-id=${record._id}>
         <div class="row">
           <div class="col-sm-7 mr-auto">
             <div class="row">
@@ -141,11 +146,9 @@ function renderRecords (records) {
             <a class="btn btn-outline-secondary mx-2" href="/records/${record._id}/edit" style="border: none;">
               <i class="far fa-edit"></i>
             </a>
-            <form class="delete" onsubmit="return deleteCheck()" style="display: inline;">
-              <button class="btn btn-outline-danger" type="submit" style="border: none;">
-                <i class="far fa-trash-alt"></i>
-              </button>
-            </form>
+            <button class="btn btn-outline-danger delete" style="border: none;">
+              <i class="far fa-trash-alt delete"></i>
+            </button>
           </div>
         </div>
       </li>

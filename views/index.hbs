@@ -50,7 +50,7 @@
 <ul class="list-group" id="record-panel">
   {{#if records}}
   {{#each records}}
-  <li class="list-group-item" id="record" data-id={{ this._id }}>
+  <li class="list-group-item record" data-id={{ this._id }}>
     <div class="row">
       <div class="col-sm-7 mr-auto">
         <div class="row">
@@ -73,11 +73,9 @@
         <a class="btn btn-outline-secondary mx-2" href="/records/{{ this._id }}/edit" style="border: none;">
           <i class="far fa-edit"></i>
         </a>
-        <form class="delete" onsubmit="deleteCheck()" style="display: inline;">
-          <button class="btn btn-outline-danger" type="submit" style="border: none;">
-            <i class="far fa-trash-alt"></i>
-          </button>
-        </form>
+        <button class="btn btn-outline-danger delete" style="border: none;">
+          <i class="far fa-trash-alt delete"></i>
+        </button>
       </div>
     </div>
   </li>
