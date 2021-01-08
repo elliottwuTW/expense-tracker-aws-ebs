@@ -1,7 +1,7 @@
 {{!-- 顯示總金額、設定篩選條件 --}}
 
 {{> message}}
-<form action="/records">
+<form id="filter">
   <div class="row my-3">
     <div class="col-auto mr-auto d-flex align-items-center">
       <span class="mr-2">總支出: </span>
@@ -11,14 +11,14 @@
     <div class="col-auto">
       <div class="d-flex align-items-center">
         <i class="far fa-clock mx-2"></i>
-        <input type="month" class="custom-select" name="period" value="{{this.period}}" onchange="this.form.submit()">
+        <input type="month" class="custom-select" name="period" value="{{this.period}}">
       </div>
     </div>
     {{!-- 排序 --}}
     <div class="col-auto">
       <div class="d-flex align-items-center">
         <i class="fas fa-sort-amount-down mx-2"></i>
-        <select class="custom-select" onchange="this.form.submit()" name="sort">
+        <select class="custom-select" name="sort">
           {{#each sorts}}
           <option value="{{@key}}" {{#if (equal ../sort @key)}} selected {{/if}}>
             {{this}}</option>
@@ -30,7 +30,7 @@
     <div class="col-auto">
       <div class="d-flex align-items-center">
         <i class="fas fa-tag mx-2"></i>
-        <select class="custom-select" onchange="this.form.submit()" name="categoryValue">
+        <select class="custom-select" name="categoryValue">
           {{#each categories}}
           <option value="{{this.value}}" {{#if (equal ../categoryValue this.value)}} selected {{/if}}>
             {{this.title}}</option>
@@ -48,7 +48,7 @@
 
 {{!-- 支出列表 --}}
 {{#if records}}
-<ul class="list-group">
+<ul class="list-group" id="record-panel">
   {{#each records}}
   <li class="list-group-item" id="record" data-id={{ this._id }}>
     <div class="row">
