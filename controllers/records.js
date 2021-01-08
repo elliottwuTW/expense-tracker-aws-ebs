@@ -43,6 +43,7 @@ exports.getNewRecordPage = (req, res, next) => {
       // remove 'all' option
       categories.shift()
       return res.render('new', {
+        today: new Date(),
         categories: categories.map((category) => category.title)
       })
     })
