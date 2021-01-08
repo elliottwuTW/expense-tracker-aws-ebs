@@ -43,6 +43,7 @@ exports.getNewRecordPage = (req, res, next) => {
       // remove 'all' option
       categories.shift()
       return res.render('new', {
+        today: new Date(),
         categories: categories.map((category) => category.title)
       })
     })
@@ -104,6 +105,6 @@ exports.updateRecord = (req, res, next) => {
 exports.deleteRecord = (req, res, next) => {
   Record.findOne({ _id: req.params.id, user: req.user._id })
     .then((record) => record.remove())
-    .then(res.redirect('/'))
+    .then(() => res.json({ status: 'success' }))
     .catch(next)
 }

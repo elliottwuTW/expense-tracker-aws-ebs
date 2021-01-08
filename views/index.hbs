@@ -50,7 +50,7 @@
 {{#if records}}
 <ul class="list-group">
   {{#each records}}
-  <li class="list-group-item">
+  <li class="list-group-item" id="record" data-id={{ this._id }}>
     <div class="row">
       <div class="col-sm-7 mr-auto">
         <div class="row">
@@ -73,8 +73,7 @@
         <a class="btn btn-outline-secondary mx-2" href="/records/{{ this._id }}/edit" style="border: none;">
           <i class="far fa-edit"></i>
         </a>
-        <form action="/records/{{ this._id }}?_method=DELETE" method="POST" onsubmit="return deleteCheck()"
-          style="display: inline;">
+        <form class="delete" onsubmit="return deleteCheck()" style="display: inline;">
           <button class="btn btn-outline-danger" type="submit" style="border: none;">
             <i class="far fa-trash-alt"></i>
           </button>
