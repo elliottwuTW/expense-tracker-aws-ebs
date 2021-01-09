@@ -29,7 +29,7 @@
     <div class="col-auto">
       <div class="d-flex align-items-center">
         <i class="fas fa-tag mx-2"></i>
-        <select class="custom-select" name="categoryValue">
+        <select class="custom-select" name="categoryValue" id="category-tag">
           {{#each categories}}
           <option value="{{this.value}}" {{#if (equal ../categoryValue this.value)}} selected {{/if}}>
             {{this.title}}</option>
@@ -40,9 +40,15 @@
   </div>
 </form>
 
-<div class="d-flex align-items-center mb-2">
-  <div class="mr-2">📅</div>
-  <h5 class="m-0 duration">{{formatDuration duration}}</h5>
+<div class="d-flex align-items-center justify-content-between mb-2">
+  <div class="mr-2">📅
+    <h5 class="m-0 duration" style="display: inline;">{{formatDuration duration}}</h5>
+  </div>
+  <div class="d-flex" id="type-panel">
+    <button class="type btn active" id="all">全部</button>
+    <button class="type btn" id="expense">支出</button>
+    <button class="type btn" id="income">收入</button>
+  </div>
 </div>
 
 {{!-- 支出列表 --}}

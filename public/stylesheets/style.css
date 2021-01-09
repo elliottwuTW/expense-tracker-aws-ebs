@@ -2,3 +2,19 @@ body {
   background: #f8f8fd;
   color: #514B64;
 }
+
+.type {
+  border: 1px solid #aaa;
+  border-radius: 15px;
+  padding: 5px 20px 5px;
+  margin-left: 15px;
+}
+
+.type:hover {
+  background-color: #A6CDE7;
+}
+
+.type.active {
+  background-color: #c0dff3;
+  outline: none;
+}

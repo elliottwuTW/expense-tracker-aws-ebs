@@ -30,6 +30,8 @@ exports.getMonthlyRecords = (req, res, next) => {
           cur = arr[index].amount
           return acc + cur
         }, 0)
+        // rearrange the category titles dropdown
+        buildCategories(categories, 'all')
 
         return res.render('index', {
           records,

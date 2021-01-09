@@ -4,6 +4,7 @@ const recordPanel = getElem('#record-panel')
 const filterForm = getElem('#filter')
 const totalAmount = getElem('.total-amount')
 const duration = getElem('.duration')
+const typePanel = getElem('#type-panel')
 
 document.addEventListener('DOMContentLoaded', function () {
   // delete the record
@@ -35,23 +36,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // filter the records
   if (filterForm) {
-    filterForm.addEventListener('change', function (event) {
-      const period = getElem("[name='period']").value
-      const sort = getElem("[name='sort']").value
-      const categoryValue = getElem("[name='categoryValue']").value
+    filterForm.addEventListener('change', getAndRenderFilteredRecords)
+  }
 
-      const url = apiURL + `?period=${period}&sort=${sort}&categoryValue=${categoryValue}`
-      window.history.pushState({}, '', url)
-
-      // get records
-      axios.get(url)
-        .then(response => {
-          const records = response.data.data.records
-          renderRecords(records)
-          updateTotalAmount()
-          updateDuration(period)
+  // activate record type for rending
+  if (typePanel) {
+    typePanel.addEventListener('click', function (event) {
+      if (event.target.matches('.type')) {
+        getAndRenderFilteredRecords(event)
+        const typeEls = document.querySelectorAll('.type')
+        typeEls.forEach(typeEl => {
+          typeEl.classList.remove('active')
         })
-        .catch(err => console.error(err))
+        event.target.classList.add('active')
+      }
     })
   }
 })
@@ -112,8 +110,29 @@ function formatDate (date) {
   }
 }
 
+// get filtered records through ajax
+function getAndRenderFilteredRecords () {
+  const period = getElem("[name='period']").value
+  const sort = getElem("[name='sort']").value
+  const categoryValue = getElem("[name='categoryValue']").value
+
+  const url = apiURL + `?period=${period}&sort=${sort}&categoryValue=${categoryValue}`
+  window.history.pushState({}, '', url)
+
+  // get records
+  axios.get(url)
+    .then(response => {
+      const records = response.data.data.records
+      renderRecords(records)
+      updateTotalAmount()
+      updateDuration(period)
+    })
+    .catch(err => console.error(err))
+}
+
 // render records out
 function renderRecords (records) {
+  // render
   recordPanel.innerHTML = ''
   if (!records.length) {
     recordPanel.innerHTML = `
@@ -121,6 +140,21 @@ function renderRecords (records) {
       <h4>成功守住錢包 🤑</h4>
     </div>`
   } else {
+    // display all, expense or income
+    const typeEls = document.querySelectorAll('.type')
+    let type
+    typeEls.forEach(typeEl => {
+      if (typeEl.matches('.active')) {
+        type = typeEl.id
+      }
+    })
+
+    // filter record type
+    if (type === 'expense') {
+      records = records.filter(record => !record.isIncome)
+    } else if (type === 'income') {
+      records = records.filter(record => record.isIncome)
+    }
     records.forEach(record => {
       recordPanel.innerHTML += `
       <li class="list-group-item record" data-id=${record._id}>
