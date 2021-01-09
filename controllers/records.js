@@ -84,7 +84,11 @@ exports.getNewIncomePage = (req, res, next) => {
 
 // Add a record
 exports.createRecord = (req, res, next) => {
-  const { name, date, categoryTitle, merchant, amount } = req.body
+  const { name, date, categoryTitle, merchant } = req.body
+  const isIncome = (req.body.isIncome === 'true')
+  let amount = req.body.amount
+  if (!isIncome) { amount = '-' + amount }
+
   Category.findOne({ title: categoryTitle })
     .then((category) => {
       return Record.create({
@@ -93,7 +97,8 @@ exports.createRecord = (req, res, next) => {
         merchant,
         amount,
         category: category._id,
-        user: req.user._id
+        user: req.user._id,
+        isIncome
       })
     })
     .then(res.redirect('/'))
