@@ -22,6 +22,9 @@ module.exports = (model, populate) => (req, res, next) => {
       if (category !== null && category.value !== 'all') {
         conditions.category = category._id
       }
+      // owner
+      conditions.user = req.user._id
+
       // model query
       const query = model.find(conditions).populate(populate).lean()
 

@@ -44,9 +44,9 @@ exports.getMonthlyRecords = (req, res, next) => {
     .catch(next)
 }
 
-// Get the page that create a new record
-exports.getNewRecordPage = (req, res, next) => {
-  Category.find()
+// Get the page that create a new expense
+exports.getNewExpensePage = (req, res, next) => {
+  Category.find({ type: { $ne: 'income' } })
     .lean()
     .sort({ _id: 'asc' })
     .then((categories) => {
@@ -54,7 +54,29 @@ exports.getNewRecordPage = (req, res, next) => {
       categories.shift()
       return res.render('new', {
         today: new Date(),
-        categories: categories.map((category) => category.title)
+        categories: categories.map((category) => category.title),
+        isIncome: false
+      })
+    })
+    .catch(next)
+}
+
+// Get the page that create a new income
+exports.getNewIncomePage = (req, res, next) => {
+  Category.find({ type: { $ne: 'expense' } })
+    .lean()
+    .sort({ _id: 'asc' })
+    .then((categories) => {
+      // remove 'all' option
+      categories.shift()
+      // move 'else' to the bottom
+      const elseIndex = categories.findIndex(category => category.value === 'else')
+      const elseEl = categories.splice(elseIndex, 1)
+      categories.push(elseEl[0])
+      return res.render('new', {
+        today: new Date(),
+        categories: categories.map((category) => category.title),
+        isIncome: true
       })
     })
     .catch(next)
