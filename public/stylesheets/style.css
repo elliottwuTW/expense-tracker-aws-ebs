@@ -18,3 +18,11 @@ body {
   background-color: #c0dff3;
   outline: none;
 }
+
+.record.income {
+  background-color: rgba(78,125,52, 0.06);
+}
+
+.record.expense {
+  background-color: rgba(192,57,43, 0.06);
+}

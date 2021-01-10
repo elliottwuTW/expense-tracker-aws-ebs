@@ -43,12 +43,12 @@ document.addEventListener('DOMContentLoaded', function () {
   if (typePanel) {
     typePanel.addEventListener('click', function (event) {
       if (event.target.matches('.type')) {
-        getAndRenderFilteredRecords(event)
         const typeEls = document.querySelectorAll('.type')
         typeEls.forEach(typeEl => {
           typeEl.classList.remove('active')
         })
         event.target.classList.add('active')
+        getAndRenderFilteredRecords(event)
       }
     })
   }
@@ -70,7 +70,12 @@ function getElem (selector) {
 // update total amount on page
 function updateTotalAmount () {
   const amountNodeArray = [...document.querySelectorAll('.amount')]
-  totalAmount.innerText = getTotalAmount(amountNodeArray)
+  const balance = getTotalAmount(amountNodeArray)
+  if (balance >= 0) {
+    totalAmount.innerHTML = `<span style="color: #4e7d34 ;">${balance}</span>`
+  } else {
+    totalAmount.innerHTML = `<span style="color: #c0392b ;">${balance}</span>`
+  }
 }
 
 // get total amount of all records
@@ -116,7 +121,16 @@ function getAndRenderFilteredRecords () {
   const sort = getElem("[name='sort']").value
   const categoryValue = getElem("[name='categoryValue']").value
 
-  const url = apiURL + `?period=${period}&sort=${sort}&categoryValue=${categoryValue}`
+  // record type
+  const typeEls = document.querySelectorAll('.type')
+  let type
+  typeEls.forEach(typeEl => {
+    if (typeEl.matches('.active')) {
+      type = typeEl.id
+    }
+  })
+
+  const url = apiURL + `?period=${period}&sort=${sort}&categoryValue=${categoryValue}&type=${type}`
   window.history.pushState({}, '', url)
 
   // get records
@@ -132,32 +146,16 @@ function getAndRenderFilteredRecords () {
 
 // render records out
 function renderRecords (records) {
-  // render
   recordPanel.innerHTML = ''
   if (!records.length) {
     recordPanel.innerHTML = `
     <div class="d-flex justify-content-center mt-5">
-      <h4>成功守住錢包 🤑</h4>
+      <h4>沒有計帳紀錄</h4>
     </div>`
   } else {
-    // display all, expense or income
-    const typeEls = document.querySelectorAll('.type')
-    let type
-    typeEls.forEach(typeEl => {
-      if (typeEl.matches('.active')) {
-        type = typeEl.id
-      }
-    })
-
-    // filter record type
-    if (type === 'expense') {
-      records = records.filter(record => !record.isIncome)
-    } else if (type === 'income') {
-      records = records.filter(record => record.isIncome)
-    }
     records.forEach(record => {
       recordPanel.innerHTML += `
-      <li class="list-group-item record" data-id=${record._id}>
+      <li class="list-group-item record ${record.amount >= 0 ? 'income' : 'expense'}" data-id=${record._id}>
         <div class="row">
           <div class="col-sm-7 mr-auto">
             <div class="row">
