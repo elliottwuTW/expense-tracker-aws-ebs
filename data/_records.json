@@ -2,57 +2,65 @@
   {
     "name": "早餐",
     "category": "餐飲食品",
-    "date": "2020-11-11",
-    "amount": 120,
-    "merchant": "麥味登"
+    "date": "2021-01-05",
+    "amount": -120,
+    "merchant": "麥味登",
+    "isIncome": false
   },
   {
     "name": "換燈泡",
     "category": "家居物業",
-    "date": "2020-11-03",
-    "amount": 200,
-    "merchant": "小北百貨"
+    "date": "2021-01-03",
+    "amount": -200,
+    "merchant": "小北百貨",
+    "isIncome": false
   },
   {
     "name": "通勤",
     "category": "交通出行",
-    "date": "2020-11-08",
-    "amount": 50,
-    "merchant": "北捷"
+    "date": "2021-01-08",
+    "amount": -50,
+    "merchant": "北捷",
+    "isIncome": false
   },
   {
     "name": "早餐",
     "category": "餐飲食品",
-    "date": "2020-10-11",
-    "amount": 120,
-    "merchant": "麥味登"
+    "date": "2021-01-11",
+    "amount": -120,
+    "merchant": "麥味登",
+    "isIncome": false
   },
   {
     "name": "電影",
     "category": "休閒娛樂",
-    "date": "2020-08-10",
-    "amount": 280,
-    "merchant": "威秀影城"
+    "date": "2021-01-10",
+    "amount": -280,
+    "merchant": "威秀影城",
+    "isIncome": false
   },
   {
     "name": "加油",
     "category": "交通出行",
-    "date": "2020-02-05",
-    "amount": 280,
-    "merchant": "中油"
+    "date": "2021-01-05",
+    "amount": -280,
+    "merchant": "中油",
+    "isIncome": false
   },
   {
     "name": "房租",
     "category": "家居物業",
-    "date": "2020-05-30",
-    "amount": 9800,
-    "merchant": "房東"
+    "date": "2021-01-03",
+    "amount": -9800,
+    "merchant": "房東",
+    "isIncome": false
   },
   {
     "name": "晚餐",
     "category": "餐飲食品",
-    "date": "2020-04-10",
-    "amount": 280,
-    "merchant": "麥當勞"
+    "date": "2021-01-10",
+    "amount": -280,
+    "merchant": "麥當勞",
+    "isIncome": false
   }
 ]
