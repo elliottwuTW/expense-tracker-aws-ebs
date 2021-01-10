@@ -1,21 +1,28 @@
 body {
   background: #f8f8fd;
   color: #514B64;
-  /* min-height: 100vh; */
 }
 
-.btn-circle {
-    position: relative;
-    width: 35px;
-    height: 35px;
-    border-radius: 17px;
-    text-align: center;
-    font-size: 12px;
+.type {
+  border: 1px solid #aaa;
+  border-radius: 15px;
+  padding: 5px 20px 5px;
+  margin-left: 15px;
 }
 
-.fab {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.type:hover {
+  background-color: #A6CDE7;
+}
+
+.type.active {
+  background-color: #c0dff3;
+  outline: none;
+}
+
+.record.income {
+  background-color: rgba(78,125,52, 0.06);
+}
+
+.record.expense {
+  background-color: rgba(192,57,43, 0.06);
 }

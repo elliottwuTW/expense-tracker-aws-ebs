@@ -20,9 +20,18 @@
       </a>
       <div class="row justify-content-end align-items-center">
         {{#if isAuthenticated}}
-        <a class="btn btn-outline-success" href="/records/new">計一筆</button>
-          <a href="/users/logout" class="btn btn-outline-warning mx-3">登出</a>
-          {{/if}}
+        <div class="dropdown">
+          <button class="btn btn-outline-success dropdown-toggle" type="button" id="dropdownMenuButton"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            計一筆
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="/records/new-expense">支出</a>
+            <a class="dropdown-item" href="/records/new-income">收入</a>
+          </div>
+        </div>
+        <a href="/users/logout" class="btn btn-outline-warning mx-3">登出</a>
+        {{/if}}
       </div>
 
     </div>

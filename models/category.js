@@ -17,6 +17,10 @@ const categorySchema = new Schema({
   icon: {
     type: String,
     required: true
+  },
+  type: {
+    type: String,
+    default: null
   }
 })
 

@@ -1,11 +1,14 @@
 {{!-- 顯示總金額、設定篩選條件 --}}
-
 {{> message}}
 <form id="filter">
   <div class="row my-3">
     <div class="col-auto mr-auto d-flex align-items-center">
-      <span class="mr-2">總支出: </span>
-      <h2 class="total-amount" style="color: #c0392b; display: inline;"> {{totalAmount}}</h2>
+      <span class="mr-2">結餘: </span>
+      {{#if (gteZero totalAmount)}}
+      <h2 class="total-amount" style="display: inline;"><span style="color: #4e7d34 ;">{{totalAmount}}</span></h2>
+      {{else}}
+      <h2 class="total-amount" style="display: inline;"><span style="color: #c0392b ;">{{totalAmount}}</span></h2>
+      {{/if}}
     </div>
     {{!-- 期間 --}}
     <div class="col-auto">
@@ -30,7 +33,7 @@
     <div class="col-auto">
       <div class="d-flex align-items-center">
         <i class="fas fa-tag mx-2"></i>
-        <select class="custom-select" name="categoryValue">
+        <select class="custom-select" name="categoryValue" id="category-tag">
           {{#each categories}}
           <option value="{{this.value}}" {{#if (equal ../categoryValue this.value)}} selected {{/if}}>
             {{this.title}}</option>
@@ -41,16 +44,26 @@
   </div>
 </form>
 
-<div class="d-flex align-items-center mb-2">
-  <div class="mr-2">📅</div>
-  <h5 class="m-0 duration">{{formatDuration duration}}</h5>
+<div class="d-flex align-items-center justify-content-between mb-2">
+  <div class="mr-2">📅
+    <h5 class="m-0 duration" style="display: inline;">{{formatDuration duration}}</h5>
+  </div>
+  <div class="d-flex" id="type-panel">
+    <button class="type btn active" id="all">全部</button>
+    <button class="type btn" id="expense">支出</button>
+    <button class="type btn" id="income">收入</button>
+  </div>
 </div>
 
 {{!-- 支出列表 --}}
 <ul class="list-group" id="record-panel">
   {{#if records}}
   {{#each records}}
-  <li class="list-group-item record" data-id={{ this._id }}>
+  {{#if (gteZero this.amount)}}
+  <li class="list-group-item record income" data-id={{ this._id }}>
+    {{else}}
+  <li class="list-group-item record expense" data-id={{ this._id }}>
+    {{/if}}
     <div class="row">
       <div class="col-sm-7 mr-auto">
         <div class="row">
@@ -82,7 +95,7 @@
   {{/each}}
   {{else}}
   <div class="d-flex justify-content-center mt-5">
-    <h4>成功守住錢包 🤑</h4>
+    <h4>沒有計帳紀錄</h4>
   </div>
   {{/if}}
 </ul>

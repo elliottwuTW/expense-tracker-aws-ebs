@@ -23,6 +23,10 @@ const recordSchema = new Schema({
     type: String,
     required: true
   },
+  isIncome: {
+    type: Boolean,
+    required: true
+  },
   category: {
     type: Schema.Types.ObjectId,
     ref: 'Category',

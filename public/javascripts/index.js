@@ -4,6 +4,8 @@ const recordPanel = getElem('#record-panel')
 const filterForm = getElem('#filter')
 const totalAmount = getElem('.total-amount')
 const duration = getElem('.duration')
+const typePanel = getElem('#type-panel')
+const categoryTag = getElem('#category-tag')
 
 document.addEventListener('DOMContentLoaded', function () {
   // delete the record
@@ -33,25 +35,44 @@ document.addEventListener('DOMContentLoaded', function () {
     })
   }
 
-  // filter the records
+  // filter the records by setting
   if (filterForm) {
     filterForm.addEventListener('change', function (event) {
-      const period = getElem("[name='period']").value
-      const sort = getElem("[name='sort']").value
-      const categoryValue = getElem("[name='categoryValue']").value
-
-      const url = apiURL + `?period=${period}&sort=${sort}&categoryValue=${categoryValue}`
-      window.history.pushState({}, '', url)
-
-      // get records
-      axios.get(url)
+      getAjaxResult()
         .then(response => {
           const records = response.data.data.records
           renderRecords(records)
           updateTotalAmount()
-          updateDuration(period)
+          updateDuration()
         })
         .catch(err => console.error(err))
+    })
+  }
+
+  // filter the records and render the categories by record type
+  if (typePanel) {
+    typePanel.addEventListener('click', function (event) {
+      if (event.target.matches('.type')) {
+        const typeEls = document.querySelectorAll('.type')
+        typeEls.forEach(typeEl => {
+          typeEl.classList.remove('active')
+        })
+        event.target.classList.add('active')
+
+        // change category to 'all' option
+        categoryTag.value = 'all'
+
+        getAjaxResult()
+          .then(response => {
+            const records = response.data.data.records
+            const categories = response.data.data.categories
+            renderRecords(records)
+            renderCategories(categories)
+            updateTotalAmount()
+            updateDuration()
+          })
+          .catch(err => console.error(err))
+      }
     })
   }
 })
@@ -61,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
  */
 // confirm the delete action
 function deleteCheck () {
-  return window.confirm('確認要刪除這個支出?')
+  return window.confirm('確認要刪除這筆計帳?')
 }
 
 // get element
@@ -69,47 +90,44 @@ function getElem (selector) {
   return document.querySelector(selector)
 }
 
+// get the records and categories by the record type
+function getAjaxResult () {
+  const period = getElem("[name='period']").value
+  const sort = getElem("[name='sort']").value
+  const categoryValue = getElem("[name='categoryValue']").value
+
+  // record type
+  const typeEls = document.querySelectorAll('.type')
+  let type
+  typeEls.forEach(typeEl => {
+    if (typeEl.matches('.active')) {
+      type = typeEl.id
+    }
+  })
+
+  const url = apiURL + `?period=${period}&sort=${sort}&categoryValue=${categoryValue}&type=${type}`
+  window.history.pushState({}, '', url)
+
+  // ajax
+  return axios.get(url)
+}
+
 // update total amount on page
 function updateTotalAmount () {
   const amountNodeArray = [...document.querySelectorAll('.amount')]
-  totalAmount.innerText = getTotalAmount(amountNodeArray)
-}
-
-// get total amount of all records
-function getTotalAmount (amountNodeArray) {
-  return amountNodeArray.reduce((acc, cur, index, arr) => {
-    cur = Number(arr[index].dataset.amount)
-    return acc + cur
-  }, 0)
+  const balance = getTotalAmount(amountNodeArray)
+  if (balance >= 0) {
+    totalAmount.innerHTML = `<span style="color: #4e7d34 ;">${balance}</span>`
+  } else {
+    totalAmount.innerHTML = `<span style="color: #c0392b ;">${balance}</span>`
+  }
 }
 
 // update duration on page
-function updateDuration (period) {
+function updateDuration () {
+  const period = getElem("[name='period']").value
   const { minDate, maxDate } = getDateRange(period)
   duration.innerText = `${formatDate(minDate)}` + ' ~ ' + `${formatDate(maxDate)}`
-}
-
-// format date in YYYY-MM-DD
-function getDateRange (period) {
-  const minDate = new Date(period)
-  const maxDate = new Date(period)
-  maxDate.setMonth(maxDate.getMonth() + 1)
-  maxDate.setDate(maxDate.getDate() - 1)
-
-  return { minDate, maxDate }
-}
-
-// format date string to YYYY-MM-DD
-// "2021-01-01T00:00:00.000Z" -> "2021-01-01"
-// 2021-01-01T00:00:00.000Z -> "2021-01-01"
-function formatDate (date) { 
-  if (typeof date === 'string') {
-    return date.slice(0, 10)
-  } else if (typeof date === 'object') {
-    return date.toISOString().slice(0, 10)
-  } else {
-    throw new Error('unknown date type')
-  }
 }
 
 // render records out
@@ -118,12 +136,12 @@ function renderRecords (records) {
   if (!records.length) {
     recordPanel.innerHTML = `
     <div class="d-flex justify-content-center mt-5">
-      <h4>成功守住錢包 🤑</h4>
+      <h4>沒有計帳紀錄</h4>
     </div>`
   } else {
     records.forEach(record => {
       recordPanel.innerHTML += `
-      <li class="list-group-item record" data-id=${record._id}>
+      <li class="list-group-item record ${record.amount >= 0 ? 'income' : 'expense'}" data-id=${record._id}>
         <div class="row">
           <div class="col-sm-7 mr-auto">
             <div class="row">
@@ -154,5 +172,46 @@ function renderRecords (records) {
       </li>
       `
     })
+  }
+}
+
+// render categories
+function renderCategories (categories) {
+  categoryTag.innerHTML = ''
+  categories.forEach(category => {
+    categoryTag.innerHTML += `
+    <option value="${category.value}">${category.title}</option>
+    `
+  })
+}
+
+// get total amount of all records
+function getTotalAmount (amountNodeArray) {
+  return amountNodeArray.reduce((acc, cur, index, arr) => {
+    cur = Number(arr[index].dataset.amount)
+    return acc + cur
+  }, 0)
+}
+
+// format date in YYYY-MM-DD
+function getDateRange (period) {
+  const minDate = new Date(period)
+  const maxDate = new Date(period)
+  maxDate.setMonth(maxDate.getMonth() + 1)
+  maxDate.setDate(maxDate.getDate() - 1)
+
+  return { minDate, maxDate }
+}
+
+// format date string to YYYY-MM-DD
+// "2021-01-01T00:00:00.000Z" -> "2021-01-01"
+// 2021-01-01T00:00:00.000Z -> "2021-01-01"
+function formatDate (date) { 
+  if (typeof date === 'string') {
+    return date.slice(0, 10)
+  } else if (typeof date === 'object') {
+    return date.toISOString().slice(0, 10)
+  } else {
+    throw new Error('unknown date type')
   }
 }

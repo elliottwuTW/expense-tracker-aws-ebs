@@ -2,9 +2,20 @@ const Record = require('../models/record.js')
 const Category = require('../models/category.js')
 const sorts = require('../data/sorts.json')
 
+const buildCategories = require('../utils/buildCategories')
+
 // Get monthly records
 exports.getMonthlyRecords = (req, res, next) => {
-  Category.find()
+  // set category condition by record type
+  const type = req.query.type
+  let catgyCondition
+  if (type === 'expense') {
+    catgyCondition = { type: { $ne: 'income' } }
+  } else if (type === 'income') {
+    catgyCondition = { type: { $ne: 'expense' } }
+  }
+
+  Category.find(catgyCondition)
     .lean()
     .sort({ _id: 'asc' })
     .then((categories) => {
@@ -16,11 +27,14 @@ exports.getMonthlyRecords = (req, res, next) => {
       // save setting to cookie
       res.cookie('history', { period, categoryValue, sort })
 
+      // rearrange the category titles dropdown
+      buildCategories(categories, 'all')
+
       if (req.xhr) {
         // ajax request
         return res.json({
           status: 'success',
-          data: { records }
+          data: { records, categories }
         })
       } else {
         // browser request
@@ -44,17 +58,33 @@ exports.getMonthlyRecords = (req, res, next) => {
     .catch(next)
 }
 
-// Get the page that create a new record
-exports.getNewRecordPage = (req, res, next) => {
-  Category.find()
+// Get the page that create a new expense
+exports.getNewExpensePage = (req, res, next) => {
+  Category.find({ type: { $ne: 'income' } })
     .lean()
     .sort({ _id: 'asc' })
     .then((categories) => {
-      // remove 'all' option
-      categories.shift()
+      buildCategories(categories)
       return res.render('new', {
         today: new Date(),
-        categories: categories.map((category) => category.title)
+        categories: categories.map((category) => category.title),
+        isIncome: false
+      })
+    })
+    .catch(next)
+}
+
+// Get the page that create a new income
+exports.getNewIncomePage = (req, res, next) => {
+  Category.find({ type: { $ne: 'expense' } })
+    .lean()
+    .sort({ _id: 'asc' })
+    .then((categories) => {
+      buildCategories(categories)
+      return res.render('new', {
+        today: new Date(),
+        categories: categories.map((category) => category.title),
+        isIncome: true
       })
     })
     .catch(next)
@@ -62,7 +92,11 @@ exports.getNewRecordPage = (req, res, next) => {
 
 // Add a record
 exports.createRecord = (req, res, next) => {
-  const { name, date, categoryTitle, merchant, amount } = req.body
+  const { name, date, categoryTitle, merchant } = req.body
+  const isIncome = (req.body.isIncome === 'true')
+  let amount = req.body.amount
+  if (!isIncome) { amount = '-' + amount }
+
   Category.findOne({ title: categoryTitle })
     .then((category) => {
       return Record.create({
@@ -71,7 +105,8 @@ exports.createRecord = (req, res, next) => {
         merchant,
         amount,
         category: category._id,
-        user: req.user._id
+        user: req.user._id,
+        isIncome
       })
     })
     .then(res.redirect('/'))
@@ -80,16 +115,14 @@ exports.createRecord = (req, res, next) => {
 
 // Get the page that has a specific record
 exports.getRecordPage = (req, res, next) => {
-  Category.find()
+  Record.findOne({ _id: req.params.id, user: req.user._id })
     .lean()
-    .sort({ _id: 'asc' })
-    .then((categories) => {
-      // remove 'all' option
-      categories.shift()
-      return Record.findOne({ _id: req.params.id, user: req.user._id })
-        .lean()
-        .then((record) => {
-          return res.render('edit', { record, categories })
+    .then(record => {
+      const type = record.isIncome ? { $ne: 'expense' } : { $ne: 'income' }
+      return Category.find({ type }).lean().sort({ _id: 'asc' })
+        .then(categories => {
+          buildCategories(categories)
+          return res.render('edit', { record, categories, isIncome: record.isIncome })
         })
     })
     .catch(next)
@@ -101,6 +134,14 @@ exports.updateRecord = (req, res, next) => {
     .then((category) => {
       // add category attribute to req.body
       req.body.category = category._id
+
+      // check amount
+      let amount = req.body.amount
+      if (req.body.isIncome === 'false') {
+        amount = '-' + amount
+        req.body.amount = amount
+      }
+
       return Record.findOneAndUpdate({ _id: req.params.id, user: req.user._id }, req.body, {
         new: true,
         runValidators: true,

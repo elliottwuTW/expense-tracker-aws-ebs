@@ -7,6 +7,8 @@ module.exports = {
       return a.toString() === b.toString()
     }
   },
+  abs: (value) => Math.abs(value),
+  gteZero: (value) => Number(value) >= 0,
   formatDate,
   formatDuration: (duration) => `${formatDate(duration.minDate)}` + ' ~ ' + `${formatDate(duration.maxDate)}`
 }
