@@ -23,7 +23,7 @@ Users can
 
 ### Demo
 
-[廣志の私帳](https://ac-expense-tracker.herokuapp.com/)
+[廣志の私帳](https://expense-tracker-elliottwu.herokuapp.com/)
 
 ### Mock Account
 
