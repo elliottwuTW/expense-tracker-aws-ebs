@@ -25,13 +25,13 @@ document.addEventListener('DOMContentLoaded', function () {
         addLoader()
         axios.delete(`${apiURL}/${recordId}`)
           .then(response => {
-            removeLoader()
             if (response.data.status === 'success') {
               record.remove()
               updateTotalAmount()
             } else {
               alert('刪除失敗')
             }
+            removeLoader()
           })
           .catch(err => console.error(err))
       }
@@ -44,10 +44,10 @@ document.addEventListener('DOMContentLoaded', function () {
       getAjaxResult()
         .then(response => {
           const records = response.data.data.records
-          removeLoader()
           renderRecords(records)
           updateTotalAmount()
           updateDuration()
+          removeLoader()
         })
         .catch(err => console.error(err))
     })
@@ -70,11 +70,11 @@ document.addEventListener('DOMContentLoaded', function () {
           .then(response => {
             const records = response.data.data.records
             const categories = response.data.data.categories
-            removeLoader()
             renderRecords(records)
             renderCategories(categories)
             updateTotalAmount()
             updateDuration()
+            removeLoader()
           })
           .catch(err => console.error(err))
       }
@@ -114,6 +114,7 @@ function getAjaxResult () {
   window.history.pushState({}, '', url)
 
   // ajax
+  addLoader()
   return axios.get(url)
 }
 
