@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         getAjaxResult()
           .then(response => {
+            console.log('Already respond..... , response: ', response)
             const records = response.data.data.records
             const categories = response.data.data.categories
             renderRecords(records)
