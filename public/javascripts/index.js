@@ -6,6 +6,7 @@ const totalAmount = getElem('.total-amount')
 const duration = getElem('.duration')
 const typePanel = getElem('#type-panel')
 const categoryTag = getElem('#category-tag')
+const loader = getElem('.loader-wrapper')
 
 document.addEventListener('DOMContentLoaded', function () {
   // delete the record
@@ -21,8 +22,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const record = event.target.closest('.record')
         const recordId = record.dataset.id
         // DELETE request
+        addLoader()
         axios.delete(`${apiURL}/${recordId}`)
           .then(response => {
+            removeLoader()
             if (response.data.status === 'success') {
               record.remove()
               updateTotalAmount()
@@ -41,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
       getAjaxResult()
         .then(response => {
           const records = response.data.data.records
+          removeLoader()
           renderRecords(records)
           updateTotalAmount()
           updateDuration()
@@ -66,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
           .then(response => {
             const records = response.data.data.records
             const categories = response.data.data.categories
+            removeLoader()
             renderRecords(records)
             renderCategories(categories)
             updateTotalAmount()
@@ -214,4 +219,14 @@ function formatDate (date) {
   } else {
     throw new Error('unknown date type')
   }
+}
+
+// add loader
+function addLoader () {
+  loader.classList.add('show')
+}
+
+// remove loader
+function removeLoader () {
+  loader.classList.remove('show')
 }
