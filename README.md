@@ -8,19 +8,19 @@ An expense tracker app that can manage your wallet.
 
 ### Features
 
-User can
+Users can
 
 - register an account with an email only
 - login with email and password
-- login with facebook accounts
+- login with facebook or google accounts
 - logout accounts
-- view the matched expenses corresponding to the filter setting
-- see the duration of expense records
-- filter the expense records by setting year/month, tag, or sort ways
-- create a new expense record
-- update a specific expense record information
-- delete a specific expense record
-- keep their filter setting after returning to the main page
+- see the duration of records by month
+- create a new expense/income record
+- browse the records by filtering record type, time, category, or the way of sorting
+- update a specific record
+- delete a specific record
+- see the balance by month
+- keep the same filter setting when returning to the main page
 
 ### Demo
 
@@ -31,9 +31,9 @@ User can
 - email: user@example.com
 - password: 12345678
 
-### Quick Start
+### Usage
 
-```
+```bash
 # Create a project folder to start
 mkdir <project-folder>
 cd <project-folder>
@@ -43,6 +43,12 @@ git clone https://github.com/elliottwuTW/expense-tracker-app.git
 
 # Install all dependencies
 npm install
+
+# Follow .env.example to setup your .env
+touch .env
+
+# Setup your mongodb and check connection
+node ./config/mongoose.js
 
 # Generate the seed data
 npm run seed
@@ -54,20 +60,21 @@ npm run start
 npm run dev
 ```
 
-### Package Versions
+### Package Version
 
 - Node.js : 14.4.0
 - express : 4.17.1
 - express-handlebars : 5.1.0
 - mongoose : 5.10.9
+- migrate-mongo : 8.1.4
 - passport : 0.4.1
 
 ### App Info
 
 #### Author
 
-Elliott Wu [elliottwuTW](https://github.com/elliottwuTW)
+[elliottwuTW](https://github.com/elliottwuTW)
 
 #### Version
 
-1.1.0
+1.2.0
