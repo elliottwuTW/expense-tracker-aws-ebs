@@ -30,6 +30,7 @@ exports.getMonthlyRecords = (req, res, next) => {
       // rearrange the category titles dropdown
       buildCategories(categories, 'all')
 
+      console.log('req.xhr .... : ', req.xhr)
       if (req.xhr) {
         // ajax request
         return res.json({
