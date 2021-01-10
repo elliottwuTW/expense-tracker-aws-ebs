@@ -116,7 +116,11 @@ function getAjaxResult () {
 
   // ajax
   addLoader()
-  return axios.get(url)
+  return axios({
+    method: 'get',
+    url,
+    headers: { 'x-requested-with': 'XMLHttpRequest' }
+  })
 }
 
 // update total amount on page
