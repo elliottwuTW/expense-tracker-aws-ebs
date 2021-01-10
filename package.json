@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "seed": "node ./seeds/seeder.js && node ./seeds/income-categories.js",
+    "seed": "node ./seeds/seeder.js -i && node ./seeds/income-categories.js",
     "migrate:up": "npx migrate-mongo up",
     "migrate:down": "npx migrate-mongo down"
   },
