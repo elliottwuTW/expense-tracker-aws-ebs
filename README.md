@@ -3,7 +3,6 @@
 An expense tracker app that can manage your wallet.
 
 ### Main Page
-
 ![](https://raw.githubusercontent.com/elliottwuTW/expense-tracker-app/master/project_picture.png)
 
 ### Features
