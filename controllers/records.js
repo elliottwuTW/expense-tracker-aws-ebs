@@ -6,7 +6,16 @@ const buildCategories = require('../utils/buildCategories')
 
 // Get monthly records
 exports.getMonthlyRecords = (req, res, next) => {
-  Category.find()
+  // set category condition by record type
+  const type = req.query.type
+  let catgyCondition
+  if (type === 'expense') {
+    catgyCondition = { type: { $ne: 'income' } }
+  } else if (type === 'income') {
+    catgyCondition = { type: { $ne: 'expense' } }
+  }
+
+  Category.find(catgyCondition)
     .lean()
     .sort({ _id: 'asc' })
     .then((categories) => {
@@ -18,11 +27,14 @@ exports.getMonthlyRecords = (req, res, next) => {
       // save setting to cookie
       res.cookie('history', { period, categoryValue, sort })
 
+      // rearrange the category titles dropdown
+      buildCategories(categories, 'all')
+
       if (req.xhr) {
         // ajax request
         return res.json({
           status: 'success',
-          data: { records }
+          data: { records, categories }
         })
       } else {
         // browser request
@@ -30,8 +42,6 @@ exports.getMonthlyRecords = (req, res, next) => {
           cur = arr[index].amount
           return acc + cur
         }, 0)
-        // rearrange the category titles dropdown
-        buildCategories(categories, 'all')
 
         return res.render('index', {
           records,

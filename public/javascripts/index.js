@@ -5,6 +5,7 @@ const filterForm = getElem('#filter')
 const totalAmount = getElem('.total-amount')
 const duration = getElem('.duration')
 const typePanel = getElem('#type-panel')
+const categoryTag = getElem('#category-tag')
 
 document.addEventListener('DOMContentLoaded', function () {
   // delete the record
@@ -34,12 +35,21 @@ document.addEventListener('DOMContentLoaded', function () {
     })
   }
 
-  // filter the records
+  // filter the records by setting
   if (filterForm) {
-    filterForm.addEventListener('change', getAndRenderFilteredRecords)
+    filterForm.addEventListener('change', function (event) {
+      getAjaxResult()
+        .then(response => {
+          const records = response.data.data.records
+          renderRecords(records)
+          updateTotalAmount()
+          updateDuration()
+        })
+        .catch(err => console.error(err))
+    })
   }
 
-  // activate record type for rending
+  // filter the records and render the categories by record type
   if (typePanel) {
     typePanel.addEventListener('click', function (event) {
       if (event.target.matches('.type')) {
@@ -48,7 +58,20 @@ document.addEventListener('DOMContentLoaded', function () {
           typeEl.classList.remove('active')
         })
         event.target.classList.add('active')
-        getAndRenderFilteredRecords(event)
+
+        // change category to 'all' option
+        categoryTag.value = 'all'
+
+        getAjaxResult()
+          .then(response => {
+            const records = response.data.data.records
+            const categories = response.data.data.categories
+            renderRecords(records)
+            renderCategories(categories)
+            updateTotalAmount()
+            updateDuration()
+          })
+          .catch(err => console.error(err))
       }
     })
   }
@@ -67,56 +90,8 @@ function getElem (selector) {
   return document.querySelector(selector)
 }
 
-// update total amount on page
-function updateTotalAmount () {
-  const amountNodeArray = [...document.querySelectorAll('.amount')]
-  const balance = getTotalAmount(amountNodeArray)
-  if (balance >= 0) {
-    totalAmount.innerHTML = `<span style="color: #4e7d34 ;">${balance}</span>`
-  } else {
-    totalAmount.innerHTML = `<span style="color: #c0392b ;">${balance}</span>`
-  }
-}
-
-// get total amount of all records
-function getTotalAmount (amountNodeArray) {
-  return amountNodeArray.reduce((acc, cur, index, arr) => {
-    cur = Number(arr[index].dataset.amount)
-    return acc + cur
-  }, 0)
-}
-
-// update duration on page
-function updateDuration (period) {
-  const { minDate, maxDate } = getDateRange(period)
-  duration.innerText = `${formatDate(minDate)}` + ' ~ ' + `${formatDate(maxDate)}`
-}
-
-// format date in YYYY-MM-DD
-function getDateRange (period) {
-  const minDate = new Date(period)
-  const maxDate = new Date(period)
-  maxDate.setMonth(maxDate.getMonth() + 1)
-  maxDate.setDate(maxDate.getDate() - 1)
-
-  return { minDate, maxDate }
-}
-
-// format date string to YYYY-MM-DD
-// "2021-01-01T00:00:00.000Z" -> "2021-01-01"
-// 2021-01-01T00:00:00.000Z -> "2021-01-01"
-function formatDate (date) { 
-  if (typeof date === 'string') {
-    return date.slice(0, 10)
-  } else if (typeof date === 'object') {
-    return date.toISOString().slice(0, 10)
-  } else {
-    throw new Error('unknown date type')
-  }
-}
-
-// get filtered records through ajax
-function getAndRenderFilteredRecords () {
+// get the records and categories by the record type
+function getAjaxResult () {
   const period = getElem("[name='period']").value
   const sort = getElem("[name='sort']").value
   const categoryValue = getElem("[name='categoryValue']").value
@@ -133,15 +108,26 @@ function getAndRenderFilteredRecords () {
   const url = apiURL + `?period=${period}&sort=${sort}&categoryValue=${categoryValue}&type=${type}`
   window.history.pushState({}, '', url)
 
-  // get records
-  axios.get(url)
-    .then(response => {
-      const records = response.data.data.records
-      renderRecords(records)
-      updateTotalAmount()
-      updateDuration(period)
-    })
-    .catch(err => console.error(err))
+  // ajax
+  return axios.get(url)
+}
+
+// update total amount on page
+function updateTotalAmount () {
+  const amountNodeArray = [...document.querySelectorAll('.amount')]
+  const balance = getTotalAmount(amountNodeArray)
+  if (balance >= 0) {
+    totalAmount.innerHTML = `<span style="color: #4e7d34 ;">${balance}</span>`
+  } else {
+    totalAmount.innerHTML = `<span style="color: #c0392b ;">${balance}</span>`
+  }
+}
+
+// update duration on page
+function updateDuration () {
+  const period = getElem("[name='period']").value
+  const { minDate, maxDate } = getDateRange(period)
+  duration.innerText = `${formatDate(minDate)}` + ' ~ ' + `${formatDate(maxDate)}`
 }
 
 // render records out
@@ -186,5 +172,46 @@ function renderRecords (records) {
       </li>
       `
     })
+  }
+}
+
+// render categories
+function renderCategories (categories) {
+  categoryTag.innerHTML = ''
+  categories.forEach(category => {
+    categoryTag.innerHTML += `
+    <option value="${category.value}">${category.title}</option>
+    `
+  })
+}
+
+// get total amount of all records
+function getTotalAmount (amountNodeArray) {
+  return amountNodeArray.reduce((acc, cur, index, arr) => {
+    cur = Number(arr[index].dataset.amount)
+    return acc + cur
+  }, 0)
+}
+
+// format date in YYYY-MM-DD
+function getDateRange (period) {
+  const minDate = new Date(period)
+  const maxDate = new Date(period)
+  maxDate.setMonth(maxDate.getMonth() + 1)
+  maxDate.setDate(maxDate.getDate() - 1)
+
+  return { minDate, maxDate }
+}
+
+// format date string to YYYY-MM-DD
+// "2021-01-01T00:00:00.000Z" -> "2021-01-01"
+// 2021-01-01T00:00:00.000Z -> "2021-01-01"
+function formatDate (date) { 
+  if (typeof date === 'string') {
+    return date.slice(0, 10)
+  } else if (typeof date === 'object') {
+    return date.toISOString().slice(0, 10)
+  } else {
+    throw new Error('unknown date type')
   }
 }
