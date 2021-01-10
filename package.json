@@ -7,7 +7,8 @@
     "start": "node app.js",
     "dev": "nodemon app.js",
     "seed": "node ./seeds/seeder.js && node ./seeds/income-categories.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "migrate:up": "npx migrate-mongo up",
+    "migrate:down": "npx migrate-mongo down"
   },
   "keywords": [],
   "author": "",
