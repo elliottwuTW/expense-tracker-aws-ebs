@@ -3,6 +3,10 @@ body {
   color: #514B64;
 }
 
+.home:hover {
+  text-decoration: none;
+}
+
 .type {
   border: 1px solid #aaa;
   border-radius: 15px;
