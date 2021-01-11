@@ -2,7 +2,7 @@
 {{> message}}
 <form id="filter">
   <div class="row align-items-center justify-content-between m-2">
-    <div class="col-md-2 align-items-center d-flex p-0">
+    <div class="col-md-3 align-items-center d-flex p-0">
       <span class="mr-2">結餘: </span>
       {{#if (gteZero totalAmount)}}
       <h2 class="total-amount" style="display: inline;"><span style="color: #4e7d34 ;">{{totalAmount}}</span></h2>
@@ -10,7 +10,7 @@
       <h2 class="total-amount" style="display: inline;"><span style="color: #c0392b ;">{{totalAmount}}</span></h2>
       {{/if}}
     </div>
-    <div class="col-md-10 align-items-center justify-content-between row">
+    <div class="col-md-9 align-items-center justify-content-between row">
       {{!-- 期間 --}}
       <div class="col-sm-4 p-0">
         <div class="d-flex align-items-center">
