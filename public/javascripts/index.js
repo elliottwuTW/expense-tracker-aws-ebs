@@ -23,7 +23,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const recordId = record.dataset.id
         // DELETE request
         addLoader()
-        axios.delete(`${apiURL}/${recordId}`)
+        axios({
+          method: 'delete',
+          url: `${apiURL}/${recordId}`,
+          headers: { 'x-requested-with': 'XMLHttpRequest' }
+        })
           .then(response => {
             if (response.data.status === 'success') {
               record.remove()
@@ -115,7 +119,11 @@ function getAjaxResult () {
 
   // ajax
   addLoader()
-  return axios.get(url)
+  return axios({
+    method: 'get',
+    url,
+    headers: { 'x-requested-with': 'XMLHttpRequest' }
+  })
 }
 
 // update total amount on page
@@ -148,24 +156,20 @@ function renderRecords (records) {
     records.forEach(record => {
       recordPanel.innerHTML += `
       <li class="list-group-item record ${record.amount >= 0 ? 'income' : 'expense'}" data-id=${record._id}>
-        <div class="row">
-          <div class="col-sm-7 mr-auto">
-            <div class="row">
-              <div class="d-flex flex-column justify-content-center align-items-center"
-                style="width: 50px; transform: scale(0.9);">
-                ${record.category.icon}</div>
-              <div class="col-auto mr-auto">
-                <div class="row" style="font-size: large;">${record.name} / ${record.merchant}</div>
-                <div class="row">
-                  <small>${formatDate(record.date)} </small>
-                </div>
-              </div>
-              <div class="col-auto d-flex flex-column justify-content-center amount" data-amount=${record.amount}>
-                NT ${record.amount}
-              </div>
+        <div class="row justify-content-between">
+          <div class="col-sm-7 d-flex">
+            <div class="d-flex justify-content-center align-items-center" style="width: 40px; transform: scale(0.9);">
+              ${record.category.icon}
             </div>
-
+            <div class="col-auto mr-auto">
+              <div style="font-size: large;">${record.name} / ${record.merchant}</div>
+              <span style="display: block;">${formatDate(record.date)}</span>
+            </div>
+            <div class="d-flex align-items-center pr-2 amount" style="font-size: large;" data-amount=${record.amount}>
+              ${record.amount}
+            </div>
           </div>
+
           <div class="col-sm-5 d-flex align-items-center justify-content-end">
             <a class="btn btn-outline-secondary mx-2" href="/records/${record._id}/edit" style="border: none;">
               <i class="far fa-edit"></i>
