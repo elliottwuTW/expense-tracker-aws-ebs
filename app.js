@@ -19,7 +19,7 @@ const usePassport = require('./config/passport')
 const localVar = require('./middleware/localVar')
 
 const app = express()
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 8081
 
 setViewEngine(app)
 
