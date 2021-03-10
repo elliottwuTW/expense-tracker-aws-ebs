@@ -41,15 +41,19 @@ app.use(flash())
 app.use(localVar)
 
 // app.use(routes)
-// const Category = require('./models/category')
-app.use((req, res, next) => {
-  // Category.findAll({})
+const Category = require('./models/category')
+app.use(async (req, res, next) => {
+  try {
+    const categories = await Category.findAll({})
+    return res.json({ message: 'It worked!', categories })
+  } catch (err) {
+    return res.json({ message: 'Async error happened!' })
+  }
   //   .lean()
   //   .then(categories => {
   //     return res.json(categories)
   //   })
   //   .catch(next)
-  return res.json({ message: 'It worked!' })
 })
 
 // Error handling
