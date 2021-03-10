@@ -4,7 +4,6 @@ const FacebookStrategy = require('passport-facebook').Strategy
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 
 const bcrypt = require('bcryptjs')
-const User = require('../models/user')
 
 // verified function with third-party returned information
 const verifiedFunction = (req, accessToken, refreshToken, profile, done) => {
