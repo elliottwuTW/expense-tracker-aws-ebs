@@ -41,9 +41,14 @@ const PORT = process.env.PORT
 // app.use(localVar)
 
 // app.use(routes)
-
+const Category = require('./models/category')
 app.use((req, res, next) => {
-  return res.send('It Worked!')
+  Category.findAll({})
+    .lean()
+    .then(categories => {
+      return res.json(categories)
+    })
+    .catch(next)
 })
 
 // Error handling
