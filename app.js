@@ -41,17 +41,18 @@ app.use(flash())
 app.use(localVar)
 
 // app.use(routes)
-const AWS = require('aws-sdk')
-AWS.config.update({ region: 'ap-southeast-1' })
-const dynamodb = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'})
+// const AWS = require('aws-sdk')
+// AWS.config.update({ region: 'ap-southeast-1' })
+// const dynamodb = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'})
 app.use(async (req, res, next) => {
-  const params = { TableName: 'Categories' }
-  try {
-    const data = await dynamodb.scan(params).promise()
-    return res.json({ message: 'It worked!', categories: data.Items })
-  } catch (err) {
-    return res.json({ message: 'Async error happened!' })
-  }
+  // const params = { TableName: 'Categories' }
+  return res.render('error')
+  // try {
+  //   const data = await dynamodb.scan(params).promise()
+  //   return res.json({ message: 'It worked!', categories: data.Items })
+  // } catch (err) {
+  //   return res.json({ message: 'Async error happened!' })
+  // }
 })
 
 // Error handling
