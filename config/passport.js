@@ -9,19 +9,20 @@ const User = require('../models/user')
 // verified function with third-party returned information
 const verifiedFunction = (req, accessToken, refreshToken, profile, done) => {
   const { name, email } = profile._json
-  User.findOne({ email }).then((user) => {
-    if (user) {
-      return done(null, user, req.flash('login_success', 'Login successfully')
-      )
-    }
+  return done(null, { id: 'test-id', name, email }, req.flash('login_success', 'Login successfully'))
+  // User.findOne({ email }).then((user) => {
+  //   if (user) {
+  //     return done(null, user, req.flash('login_success', 'Login successfully')
+  //     )
+  //   }
 
-    // Create an account
-    User.create({ name, email, password: Math.random().toString(36).slice(-8) })
-      .then((user) =>
-        done(null, user, req.flash('login_success', 'Login successfully'))
-      )
-      .catch((err) => done(err, null))
-  })
+  //   // Create an account
+  //   User.create({ name, email, password: Math.random().toString(36).slice(-8) })
+  //     .then((user) =>
+  //       done(null, user, req.flash('login_success', 'Login successfully'))
+  //     )
+  //     .catch((err) => done(err, null))
+  // })
 }
 
 module.exports = (app) => {
@@ -81,9 +82,10 @@ module.exports = (app) => {
     done(null, user.id)
   })
   passport.deserializeUser((id, done) => {
-    User.findById(id)
-      .lean()
-      .then((user) => done(null, user))
-      .catch((err) => done(err, null))
+    return done(null, { id: 'test-id', name: 'test-user', email: 'test-email' })
+    // User.findById(id)
+    //   .lean()
+    //   .then((user) => done(null, user))
+    //   .catch((err) => done(err, null))
   })
 }
