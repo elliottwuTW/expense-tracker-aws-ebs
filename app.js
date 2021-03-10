@@ -12,8 +12,7 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config()
 }
 
-// require('./config/mongoose.js')
-// const routes = require('./routes/index.js')
+const routes = require('./routes/index.js')
 const setViewEngine = require('./config/viewEngine')
 const usePassport = require('./config/passport')
 const localVar = require('./middleware/localVar')
@@ -40,20 +39,19 @@ usePassport(app)
 app.use(flash())
 app.use(localVar)
 
-// app.use(routes)
+app.use(routes)
 // const AWS = require('aws-sdk')
 // AWS.config.update({ region: 'ap-southeast-1' })
 // const dynamodb = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'})
-app.use(async (req, res, next) => {
+// app.use(async (req, res, next) => {
   // const params = { TableName: 'Categories' }
-  return res.render('error')
   // try {
   //   const data = await dynamodb.scan(params).promise()
   //   return res.json({ message: 'It worked!', categories: data.Items })
   // } catch (err) {
   //   return res.json({ message: 'Async error happened!' })
   // }
-})
+// })
 
 // Error handling
 app.use((err, req, res, next) => {
