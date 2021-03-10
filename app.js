@@ -12,7 +12,7 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config()
 }
 
-// require('./config/mongoose.js')
+require('./config/mongoose.js')
 // const routes = require('./routes/index.js')
 // const setViewEngine = require('./config/viewEngine')
 // const usePassport = require('./config/passport')
