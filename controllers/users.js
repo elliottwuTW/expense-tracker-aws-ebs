@@ -1,4 +1,6 @@
-const User = require('../models/user')
+const bcrypt = require('bcryptjs')
+const { v4: uuidv4 } = require('uuid')
+const dynamodb = require('../utils/dynamodb')
 
 // Login Page
 exports.getLoginPage = (req, res) => {
@@ -40,7 +42,14 @@ exports.register = (req, res, next) => {
     return res.render('register', { registerErrors, name, email })
   }
 
-  User.findOne({ email })
+  const USER_TABLE_NAME = 'Users'
+  const params = {
+    TableName: USER_TABLE_NAME,
+    FilterExpression: 'email = :email',
+    ExpressionAttributeValues: { ':email': email },
+    Limit: 1
+  }
+  dynamodb.scan(params).promise()
     .then((user) => {
       if (user) {
         registerErrors.push({ msg: 'Email is already registered' })
@@ -48,7 +57,13 @@ exports.register = (req, res, next) => {
       }
 
       // Create an user
-      return User.create({ name, email, password })
+      const newUser = {
+        id: uuidv4(),
+        name,
+        email,
+        password: bcrypt.hashSync(password, bcrypt.genSaltSync(10))
+      }
+      dynamodb.put({ TableName: USER_TABLE_NAME, Item: newUser }).promise()
         .then((_) => res.redirect('/users/login'))
         .catch(next)
     })

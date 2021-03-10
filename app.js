@@ -1,6 +1,5 @@
 // modules
 const express = require('express')
-const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const methodOverride = require('method-override')
 const session = require('express-session')
@@ -22,8 +21,8 @@ const PORT = process.env.PORT
 
 setViewEngine(app)
 
-app.use(bodyParser.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
+app.use(express.urlencoded({ extended: true }))
 app.use(express.static('public'))
 app.use(cookieParser(process.env.COOKIE_SECRET, {
   httpOnly: true
@@ -40,18 +39,6 @@ app.use(flash())
 app.use(localVar)
 
 app.use(routes)
-// const AWS = require('aws-sdk')
-// AWS.config.update({ region: 'ap-southeast-1' })
-// const dynamodb = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'})
-// app.use(async (req, res, next) => {
-  // const params = { TableName: 'Categories' }
-  // try {
-  //   const data = await dynamodb.scan(params).promise()
-  //   return res.json({ message: 'It worked!', categories: data.Items })
-  // } catch (err) {
-  //   return res.json({ message: 'Async error happened!' })
-  // }
-// })
 
 // Error handling
 app.use((err, req, res, next) => {
