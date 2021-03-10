@@ -1,10 +1,10 @@
 // modules
 const express = require('express')
-// const bodyParser = require('body-parser')
-// const cookieParser = require('cookie-parser')
-// const methodOverride = require('method-override')
-// const session = require('express-session')
-// const flash = require('connect-flash')
+const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
+const methodOverride = require('method-override')
+const session = require('express-session')
+const flash = require('connect-flash')
 const dotenv = require('dotenv')
 
 // Environment vars
@@ -14,41 +14,42 @@ if (process.env.NODE_ENV !== 'production') {
 
 require('./config/mongoose.js')
 // const routes = require('./routes/index.js')
-// const setViewEngine = require('./config/viewEngine')
-// const usePassport = require('./config/passport')
-// const localVar = require('./middleware/localVar')
+const setViewEngine = require('./config/viewEngine')
+const usePassport = require('./config/passport')
+const localVar = require('./middleware/localVar')
 
 const app = express()
 const PORT = process.env.PORT
 
-// setViewEngine(app)
+setViewEngine(app)
 
-// app.use(bodyParser.urlencoded({ extended: true }))
-// app.use(methodOverride('_method'))
-// app.use(express.static('public'))
-// app.use(cookieParser(process.env.COOKIE_SECRET, {
-//   httpOnly: true
-// }))
-// app.use(
-//   session({
-//     secret: process.env.SESSION_SECRET,
-//     resave: false,
-//     saveUninitialized: true
-//   })
-// )
-// usePassport(app)
-// app.use(flash())
-// app.use(localVar)
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(methodOverride('_method'))
+app.use(express.static('public'))
+app.use(cookieParser(process.env.COOKIE_SECRET, {
+  httpOnly: true
+}))
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true
+  })
+)
+usePassport(app)
+app.use(flash())
+app.use(localVar)
 
 // app.use(routes)
-const Category = require('./models/category')
+// const Category = require('./models/category')
 app.use((req, res, next) => {
-  Category.findAll({})
-    .lean()
-    .then(categories => {
-      return res.json(categories)
-    })
-    .catch(next)
+  // Category.findAll({})
+  //   .lean()
+  //   .then(categories => {
+  //     return res.json(categories)
+  //   })
+  //   .catch(next)
+  return res.json({ message: 'It worked!' })
 })
 
 // Error handling
