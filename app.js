@@ -43,7 +43,7 @@ app.use(routes)
 // Error handling
 app.use((err, req, res, next) => {
   console.error(err)
-  return res.status(500).render('error', err)
+  return res.status(500).render('error', { err })
 })
 
 // start and listen to the server

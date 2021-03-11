@@ -3,25 +3,22 @@ const LocalStrategy = require('passport-local').Strategy
 const FacebookStrategy = require('passport-facebook').Strategy
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 
-const bcrypt = require('bcryptjs')
+const isEmpty = require('../utils/isEmpty')
+const { getUserById, getUserByEmail, createUser, comparePassword } = require('../controllers/users')
 
-// verified function with third-party returned information
-const verifiedFunction = (req, accessToken, refreshToken, profile, done) => {
+// verify with third-party returned information
+const verifyInformation = (req, accessToken, refreshToken, profile, done) => {
   const { name, email } = profile._json
-  return done(null, { id: 'test-id', name, email }, req.flash('login_success', 'Login successfully'))
-  // User.findOne({ email }).then((user) => {
-  //   if (user) {
-  //     return done(null, user, req.flash('login_success', 'Login successfully')
-  //     )
-  //   }
+  getUserByEmail(email)
+    .then(data => {
+      const users = data.Items
+      if (!isEmpty(users)) return done(null, users[0], req.flash('login_success', 'Login successfully'))
 
-  //   // Create an account
-  //   User.create({ name, email, password: Math.random().toString(36).slice(-8) })
-  //     .then((user) =>
-  //       done(null, user, req.flash('login_success', 'Login successfully'))
-  //     )
-  //     .catch((err) => done(err, null))
-  // })
+      createUser({ name, email })
+        .then(data => done(null, data.Item, req.flash('login_success', 'Login successfully')))
+        .catch(err => done(err, null))
+    })
+    .catch(err => done(err, null))
 }
 
 module.exports = (app) => {
@@ -33,21 +30,19 @@ module.exports = (app) => {
     new LocalStrategy(
       { usernameField: 'email', passReqToCallback: true },
       (req, email, password, done) => {
-        return done(null, { id: 'test-id', name: 'test-user', email }, req.flash('login_success', 'Login successfully'))
-        // User.findOne({ email })
-        //   .then((user) => {
-        //     if (!user) {
-        //       return done(null, false, req.flash('login_error', 'User not found'))
-        //     }
+        getUserByEmail(email)
+          .then(data => {
+            const users = data.Items
+            if (isEmpty(users)) return done(null, false, req.flash('login_error', 'User not found'))
 
-        //     bcrypt.compare(password, user.password).then((isMatch) => {
-        //       if (!isMatch) {
-        //         return done(null, false, req.flash('login_error', 'Incorrect password'))
-        //       }
-        //       return done(null, user, req.flash('login_success', 'Login successfully'))
-        //     })
-        //   })
-        //   .catch((err) => done(err, null))
+            comparePassword(password, users[0].password)
+              .then(isMatch => {
+                if (!isMatch) return done(null, false, req.flash('login_error', 'Incorrect password'))
+                return done(null, users[0], req.flash('login_success', 'Login successfully'))
+              })
+              .catch((err) => done(err, null))
+          })
+          .catch((err) => done(err, null))
       }
     )
   )
@@ -61,7 +56,7 @@ module.exports = (app) => {
         passReqToCallback: true,
         profileFields: ['email', 'displayName']
       },
-      verifiedFunction
+      verifyInformation
     )
   )
   // Google Strategy
@@ -74,7 +69,7 @@ module.exports = (app) => {
         passReqToCallback: true,
         profileFields: ['email', 'displayName']
       },
-      verifiedFunction
+      verifyInformation
     )
   )
   // Session
@@ -82,10 +77,8 @@ module.exports = (app) => {
     done(null, user.id)
   })
   passport.deserializeUser((id, done) => {
-    return done(null, { id: 'test-id', name: 'test-user', email: 'test-email' })
-    // User.findById(id)
-    //   .lean()
-    //   .then((user) => done(null, user))
-    //   .catch((err) => done(err, null))
+    getUserById(id)
+      .then((data) => done(null, data.Item))
+      .catch((err) => done(err, null))
   })
 }

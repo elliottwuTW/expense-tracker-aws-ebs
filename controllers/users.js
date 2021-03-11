@@ -44,14 +44,7 @@ exports.register = (req, res, next) => {
     return res.render('register', { registerErrors, name, email })
   }
 
-  const USER_TABLE_NAME = 'Users'
-  const params = {
-    TableName: USER_TABLE_NAME,
-    FilterExpression: 'email = :email',
-    ExpressionAttributeValues: { ':email': email },
-    Limit: 1
-  }
-  dynamodb.scan(params).promise()
+  getUserByEmail(email)
     .then((data) => {
       const users = data.Items
       if (!isEmpty(users)) {
@@ -59,16 +52,56 @@ exports.register = (req, res, next) => {
         return res.render('register', { registerErrors, name, email })
       }
 
-      // Create an user
-      const newUser = {
-        id: uuidv4(),
-        name,
-        email,
-        password: bcrypt.hashSync(password, bcrypt.genSaltSync(10))
-      }
-      dynamodb.put({ TableName: USER_TABLE_NAME, Item: newUser }).promise()
+      createUser({ name, email, password })
         .then((_) => res.redirect('/users/login'))
         .catch(next)
     })
     .catch(next)
+}
+
+exports.getUserById = getUserById
+exports.getUserByEmail = getUserByEmail
+exports.createUser = createUser
+exports.comparePassword = comparePassword
+
+// Get user by id
+function getUserById (id) {
+  const params = {
+    TableName: process.env.USER_TABLE_NAME,
+    Key: { id }
+  }
+  return dynamodb.query(params).promise()
+}
+
+// Get user by email
+function getUserByEmail (email) {
+  const params = {
+    TableName: process.env.USER_TABLE_NAME,
+    FilterExpression: 'email = :email',
+    ExpressionAttributeValues: { ':email': email },
+    Limit: 1
+  }
+  return dynamodb.scan(params).promise()
+}
+
+// Create a new user
+function createUser (userInfo) {
+  const { name, email } = userInfo
+  // password
+  const password = userInfo.password ? userInfo.password : Math.random().toString(36).slice(-8)
+
+  return dynamodb.put({
+    TableName: process.env.USER_TABLE_NAME,
+    Item: {
+      id: uuidv4(),
+      name: name || '',
+      email: email || '',
+      password: bcrypt.hashSync(password, bcrypt.genSaltSync(10))
+    }
+  }).promise()
+}
+
+// Compare password
+function comparePassword (password, hashPassword) {
+  return bcrypt.compare(password, hashPassword)
 }
