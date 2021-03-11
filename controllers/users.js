@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs')
 const { v4: uuidv4 } = require('uuid')
+
 const dynamodb = require('../utils/dynamodb')
+const isEmpty = require('../utils/isEmpty')
 
 // Login Page
 exports.getLoginPage = (req, res) => {
@@ -50,8 +52,9 @@ exports.register = (req, res, next) => {
     Limit: 1
   }
   dynamodb.scan(params).promise()
-    .then((user) => {
-      if (user) {
+    .then((data) => {
+      const users = data.Items
+      if (!isEmpty(users)) {
         registerErrors.push({ msg: 'Email is already registered' })
         return res.render('register', { registerErrors, name, email })
       }
