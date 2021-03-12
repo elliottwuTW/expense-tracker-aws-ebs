@@ -8,6 +8,7 @@ exports.getCategoryByValue = (categoryValue) => {
     ExpressionAttributeValues: { ':value': categoryValue },
     Limit: 1
   }
+  console.log('params: ', params)
   return dynamodb.scan(params).promise()
 }
 

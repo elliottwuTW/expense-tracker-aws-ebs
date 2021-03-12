@@ -23,8 +23,11 @@ module.exports = (req, res, next) => {
     params.FilterExpression = 'isIncome = false'
   }
 
+  console.log('categoryValue: ', categoryValue)
   getCategoryByValue(categoryValue)
     .then(data => {
+      console.log('data: ', data)
+      console.log('data.Items: ', data.Items)
       if (isEmpty(data.Items)) return next(new Error('no such category'))
 
       const category = data.Items[0]
