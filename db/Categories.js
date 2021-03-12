@@ -5,10 +5,8 @@ exports.getCategoryByValue = (categoryValue) => {
     TableName: process.env.CATEGORY_TABLE_NAME,
     FilterExpression: '#value = :value',
     ExpressionAttributeNames: { '#value': 'value' },
-    ExpressionAttributeValues: { ':value': categoryValue },
-    Limit: 1
+    ExpressionAttributeValues: { ':value': categoryValue }
   }
-  console.log('params: ', params)
   return dynamodb.scan(params).promise()
 }
 

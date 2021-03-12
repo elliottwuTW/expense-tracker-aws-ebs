@@ -1,5 +1,4 @@
 module.exports = (object) => {
-  console.log('object: ', object)
   // Array
   if (Array.isArray(object) || typeof object === 'string' || object instanceof String) return object.length === 0
   // Object

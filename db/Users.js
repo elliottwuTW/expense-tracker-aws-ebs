@@ -17,8 +17,7 @@ exports.getUserByEmail = (email) => {
   const params = {
     TableName: process.env.USER_TABLE_NAME,
     FilterExpression: 'email = :email',
-    ExpressionAttributeValues: { ':email': email },
-    Limit: 1
+    ExpressionAttributeValues: { ':email': email }
   }
   return dynamodb.scan(params).promise()
 }
