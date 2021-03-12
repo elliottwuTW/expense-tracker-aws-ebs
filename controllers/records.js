@@ -8,6 +8,7 @@ const recordsTotalAmount = require('../utils/recordsTotalAmount')
 exports.getMonthlyRecords = (req, res, next) => {
   getRecordsByGSI(res.queryParams)
     .then(recordData => {
+      console.log('recordData: ', recordData)
       const records = recordData.Items
 
       // Get corresponding categories by type
@@ -19,8 +20,10 @@ exports.getMonthlyRecords = (req, res, next) => {
       }
       getCategoriesExclusiveType(exclusiveType)
         .then(categoryData => {
+          console.log('categoryData: ', categoryData)
           const categories = categoryData.Items
           buildCategories(categories, 'all')
+          console.log('categories: ', categories)
 
           // Response
           if (req.xhr) {
@@ -31,7 +34,9 @@ exports.getMonthlyRecords = (req, res, next) => {
             })
           } else {
             // browser request
+            console.log('records: ', records)
             const totalAmount = recordsTotalAmount(records)
+            console.log('totalAmount: ', totalAmount)
             return res.render('index', {
               records,
               totalAmount,

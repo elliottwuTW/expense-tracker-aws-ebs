@@ -14,7 +14,8 @@ module.exports = (req, res, next) => {
 
   // period
   const { minDate, maxDate } = getDateRange(period)
-  params.KeyConditionExpression = 'UserId = :userId AND date BETWEEN :minDate AND :maxDate'
+  params.KeyConditionExpression = 'UserId = :userId AND #date BETWEEN :minDate AND :maxDate'
+  params.ExpressionAttributeNames = { '#date': 'date' }
 
   // type
   if (type === 'income') {
