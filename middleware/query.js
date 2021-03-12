@@ -5,9 +5,7 @@ const isEmpty = require('../utils/isEmpty')
 const { getCategoryByValue } = require('../db/Categories')
 
 module.exports = (req, res, next) => {
-  console.log('process.env.RECORD_TABLE_NAME: ', process.env.RECORD_TABLE_NAME)
-  console.log('process.env.RECORD_TABLE_GSI_NAME: ', process.env.RECORD_TABLE_GSI_NAME)
-  const params = { TableName: process.env.RECORD_TABLE_NAME, IndexName: process.env.RECORD_TABLE_GSI_NAME }
+  const params = {}
 
   // read the setting
   const type = req.query.type

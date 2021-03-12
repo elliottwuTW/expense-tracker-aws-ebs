@@ -6,7 +6,7 @@ const recordsTotalAmount = require('../utils/recordsTotalAmount')
 
 // Get monthly records
 exports.getMonthlyRecords = (req, res, next) => {
-  getRecordsByGSI(req.queryParams)
+  getRecordsByGSI(res.queryParams)
     .then(recordData => {
       const records = recordData.Items
 
