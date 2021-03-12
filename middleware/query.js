@@ -29,15 +29,20 @@ module.exports = (req, res, next) => {
       if (isEmpty(data.Items)) return next(new Error('no such category'))
 
       const category = data.Items[0]
-      if (category.value !== 'all') {
+      if (category.value === 'all') {
+        params.ExpressionAttributeValues = {
+          ':userId': req.user.id,
+          ':minDate': minDate,
+          ':maxDate': maxDate
+        }
+      } else {
         params.FilterExpression += ' AND CategoryId = :categoryId'
-      }
-
-      params.ExpressionAttributeValues = {
-        ':userId': req.user.id,
-        ':minDate': minDate,
-        ':maxDate': maxDate,
-        ':categoryId': category.id
+        params.ExpressionAttributeValues = {
+          ':userId': req.user.id,
+          ':minDate': minDate,
+          ':maxDate': maxDate,
+          ':categoryId': category.id
+        }
       }
 
       res.queryParams = params
