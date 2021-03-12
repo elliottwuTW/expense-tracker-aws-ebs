@@ -5,6 +5,7 @@ const methodOverride = require('method-override')
 const session = require('express-session')
 const flash = require('connect-flash')
 const dotenv = require('dotenv')
+const path = require('path')
 
 // Environment vars
 if (process.env.NODE_ENV !== 'production') {
@@ -23,7 +24,7 @@ setViewEngine(app)
 
 app.use(methodOverride('_method'))
 app.use(express.urlencoded({ extended: true }))
-app.use(express.static('public'))
+app.use('/static', express.static(path.join(__dirname, 'public')))
 app.use(cookieParser(process.env.COOKIE_SECRET, {
   httpOnly: true
 }))

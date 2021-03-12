@@ -34,9 +34,7 @@ exports.getMonthlyRecords = (req, res, next) => {
             })
           } else {
             // browser request
-            console.log('records: ', records)
             const totalAmount = recordsTotalAmount(records)
-            console.log('totalAmount: ', totalAmount)
             return res.render('index', {
               records,
               totalAmount,
