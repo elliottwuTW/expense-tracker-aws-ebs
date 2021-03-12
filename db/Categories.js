@@ -13,7 +13,8 @@ exports.getCategoryByValue = (categoryValue) => {
 exports.getCategoriesExclusiveType = (exclusiveType) => {
   const params = {
     TableName: process.env.CATEGORY_TABLE_NAME,
-    FilterExpression: 'type <> :type',
+    FilterExpression: '#type <> :type',
+    ExpressionAttributeNames: { '#type': 'type' },
     ExpressionAttributeValues: { ':type': exclusiveType }
   }
   return dynamodb.scan(params).promise()
