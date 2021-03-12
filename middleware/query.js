@@ -2,7 +2,7 @@ const getThisMonth = require('../utils/getThisMonth')
 const getDateRange = require('../utils/getDateRange')
 const isEmpty = require('../utils/isEmpty')
 
-const getCategoryByValue = require('../db/Categories')
+const { getCategoryByValue } = require('../db/Categories')
 
 module.exports = (req, res, next) => {
   const params = {}
@@ -48,26 +48,4 @@ module.exports = (req, res, next) => {
       next()
     })
     .catch(next)
-  // // category
-  // Category.findOne({ value: categoryValue })
-  //   .lean()
-  //   .then(category => {
-  //     if (category !== null && category.value !== 'all') {
-  //       conditions.category = category._id
-  //     }
-  //     // owner
-  //     conditions.user = req.user._id
-
-  //     // model query
-  //     const query = model.find(conditions).populate(populate).lean()
-
-  //     return query.sort(sortStr)
-  //   })
-  //   .then(results => {
-  //     res.queryResult = results
-  //     // for rendering
-
-  //     next()
-  //   })
-  //   .catch(err => console.error(err))
 }
