@@ -1,5 +1,5 @@
 // format date in YYYY-MM-DD
-const formatDate = (utcDate) => utcDate.toISOString().slice(0, 10)
+const formatDate = (dateISOString) => dateISOString.slice(0, 10)
 
 module.exports = {
   equal: (a, b) => {

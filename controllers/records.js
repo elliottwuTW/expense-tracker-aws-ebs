@@ -1,61 +1,50 @@
-// const Record = require('../models/record.js')
-// const Category = require('../models/category.js')
-// const sorts = require('../data/sorts.json')
+const { getCategoriesExclusiveType } = require('../db/Categories')
+const { getRecordsByGSI } = require('../db/Records')
 
 const buildCategories = require('../utils/buildCategories')
+const recordsTotalAmount = require('../utils/recordsTotalAmount')
 
 // Get monthly records
 exports.getMonthlyRecords = (req, res, next) => {
-  // set category condition by record type
-  const type = req.query.type
-  let catgyCondition
-  if (type === 'expense') {
-    catgyCondition = { type: { $ne: 'income' } }
-  } else if (type === 'income') {
-    catgyCondition = { type: { $ne: 'expense' } }
-  }
+  getRecordsByGSI(req.queryParams)
+    .then(recordData => {
+      const records = recordData.Items
 
-  // Category.find(catgyCondition)
-  //   .lean()
-  //   .sort({ _id: 'asc' })
-  //   .then((categories) => {
-  //     const records = res.queryResult
+      // Get corresponding categories by type
+      let exclusiveType = 'empty'
+      if (req.query.type === 'expense') {
+        exclusiveType = 'income'
+      } else if (req.query.type === 'income') {
+        exclusiveType = 'expense'
+      }
+      getCategoriesExclusiveType(exclusiveType)
+        .then(categoryData => {
+          const categories = categoryData.Items
+          buildCategories(categories, 'all')
 
-  //     const period = res.views.period
-  //     const categoryValue = res.views.categoryValue || 'all'
-  //     const sort = res.views.sort || 'date'
-  //     // save setting to cookie
-  //     res.cookie('history', { period, categoryValue, sort })
-
-  //     // rearrange the category titles dropdown
-  //     buildCategories(categories, 'all')
-
-  //     if (req.xhr) {
-  //       // ajax request
-  //       return res.json({
-  //         status: 'success',
-  //         data: { records, categories }
-  //       })
-  //     } else {
-  //       // browser request
-  //       const totalAmount = records.reduce((acc, cur, index, arr) => {
-  //         cur = arr[index].amount
-  //         return acc + cur
-  //       }, 0)
-
-  //       return res.render('index', {
-  //         records,
-  //         totalAmount,
-  //         categories,
-  //         categoryValue,
-  //         sorts,
-  //         sort,
-  //         period,
-  //         duration: res.views.duration
-  //       })
-  //     }
-  //   })
-  //   .catch(next)
+          // Response
+          if (req.xhr) {
+            // ajax request
+            return res.json({
+              status: 'success',
+              data: { records, categories }
+            })
+          } else {
+            // browser request
+            const totalAmount = recordsTotalAmount(records)
+            return res.render('index', {
+              records,
+              totalAmount,
+              categories,
+              categoryValue: res.views.categoryValue,
+              period: res.views.period,
+              duration: res.views.duration
+            })
+          }
+        })
+        .catch(next)
+    })
+    .catch(next)
 }
 
 // Get the page that create a new expense

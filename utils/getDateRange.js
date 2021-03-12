@@ -8,5 +8,5 @@ module.exports = (period) => {
   maxDate.setMonth(maxDate.getMonth() + 1)
   maxDate.setDate(maxDate.getDate() - 1)
 
-  return { minDate, maxDate }
+  return { minDate: minDate.toISOString(), maxDate: maxDate.toISOString() }
 }

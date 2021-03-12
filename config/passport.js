@@ -4,7 +4,8 @@ const FacebookStrategy = require('passport-facebook').Strategy
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 
 const isEmpty = require('../utils/isEmpty')
-const { getUserById, getUserByEmail, createUser, comparePassword } = require('../controllers/users')
+const comparePassword = require('../utils/comparePassword')
+const { getUserById, getUserByEmail, createUser } = require('../db/Users')
 
 // verify with third-party returned information
 const verifyInformation = (req, accessToken, refreshToken, profile, done) => {
