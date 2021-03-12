@@ -3,7 +3,8 @@ const dynamodb = require('./dynamodb')
 exports.getCategoryByValue = (categoryValue) => {
   const params = {
     TableName: process.env.CATEGORY_TABLE_NAME,
-    FilterExpression: 'value = :value',
+    FilterExpression: '#value = :value',
+    ExpressionAttributeNames: { '#value': 'value' },
     ExpressionAttributeValues: { ':value': categoryValue },
     Limit: 1
   }
