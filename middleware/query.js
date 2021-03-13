@@ -25,10 +25,10 @@ module.exports = (req, res, next) => {
   // type
   if (type === 'income') {
     params.FilterExpression = 'isIncome = :true'
-    params.ExpressionAttributeValues[':true'] = 'true'
+    params.ExpressionAttributeValues[':true'] = true
   } else if (type === 'expense') {
     params.FilterExpression = 'isIncome = :false'
-    params.ExpressionAttributeValues[':false'] = 'false'
+    params.ExpressionAttributeValues[':false'] = false
   }
 
   getCategoryByValue(categoryValue)

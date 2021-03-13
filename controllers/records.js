@@ -9,9 +9,9 @@ const isEmpty = require('../utils/isEmpty')
 exports.getMonthlyRecords = (req, res, next) => {
   getRecordsByUserIdDateIndex(res.queryParams)
     .then(recordData => {
-      console.log('recordData: ', recordData)
       const records = recordData.Items
       const totalAmount = recordsTotalAmount(records)
+      console.log('totalAmount: ', totalAmount)
 
       // Get corresponding categories by type
       let exclusiveType
@@ -25,7 +25,6 @@ exports.getMonthlyRecords = (req, res, next) => {
           const categories = categoryData.Items
           // if exclusiveType, may be unsorted
           if (exclusiveType) { reconstructCategories(categories, 'keepAll') }
-          console.log('categories: ', categories)
 
           return res.render('index', {
             records,
@@ -92,6 +91,7 @@ exports.createRecord = (req, res, next) => {
         merchant,
         amount,
         CategoryId: category.id,
+        category,
         UserId: req.user.id,
         isIncome
       }
