@@ -77,6 +77,8 @@ exports.getNewIncomePage = (req, res, next) => {
 exports.createRecord = (req, res, next) => {
   const { name, date, categoryTitle, merchant } = req.body
   const isIncome = (req.body.isIncome === 'true')
+  console.log('req.body.amount: ', req.body.amount)
+  console.log('typeof (req.body.amount): ', typeof (req.body.amount))
   let amount = req.body.amount
   if (!isIncome) { amount = '-' + amount }
 
@@ -89,7 +91,7 @@ exports.createRecord = (req, res, next) => {
         // date: yyyy-mm-dd
         date: (new Date(date)).toISOString(),
         merchant,
-        amount,
+        amount: Number(amount),
         CategoryId: category.id,
         category,
         UserId: req.user.id,
