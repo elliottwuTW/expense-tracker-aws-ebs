@@ -16,12 +16,19 @@ module.exports = (req, res, next) => {
   const { minDate, maxDate } = getDateRange(period)
   params.KeyConditionExpression = 'UserId = :userId AND #date BETWEEN :minDate AND :maxDate'
   params.ExpressionAttributeNames = { '#date': 'date' }
+  params.ExpressionAttributeValues = {
+    ':userId': req.user.id,
+    ':minDate': minDate,
+    ':maxDate': maxDate
+  }
 
   // type
   if (type === 'income') {
-    params.FilterExpression = 'isIncome = true'
+    params.FilterExpression = 'isIncome = :true'
+    params.ExpressionAttributeValues[':true'] = 'true'
   } else if (type === 'expense') {
-    params.FilterExpression = 'isIncome = false'
+    params.FilterExpression = 'isIncome = :false'
+    params.ExpressionAttributeValues[':false'] = 'false'
   }
 
   getCategoryByValue(categoryValue)
@@ -29,20 +36,12 @@ module.exports = (req, res, next) => {
       if (isEmpty(data.Items)) return next(new Error('no such category'))
 
       const category = data.Items[0]
-      if (category.value === 'all') {
-        params.ExpressionAttributeValues = {
-          ':userId': req.user.id,
-          ':minDate': minDate,
-          ':maxDate': maxDate
-        }
-      } else {
-        params.FilterExpression += ' AND CategoryId = :categoryId'
-        params.ExpressionAttributeValues = {
-          ':userId': req.user.id,
-          ':minDate': minDate,
-          ':maxDate': maxDate,
-          ':categoryId': category.id
-        }
+      if (category.value !== 'all') {
+        const previousFilterExpression = params.FilterExpression
+        params.FilterExpression = (previousFilterExpression)
+          ? (previousFilterExpression + ' AND CategoryId = :categoryId')
+          : 'CategoryId = :categoryId'
+        params.ExpressionAttributeValues[':categoryId'] = category.id
       }
 
       res.queryParams = params
