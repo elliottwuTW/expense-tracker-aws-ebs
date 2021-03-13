@@ -1,6 +1,7 @@
 <div class="container my-5" style="max-width: 400px;">
-  <form action="/records/{{record._id}}?_method=PUT" method="POST">
+  <form action="/records/{{record.id}}?_method=PUT" method="POST">
     <input type="hidden" name="isIncome" value={{isIncome}}>
+    <input type="hidden" name="originalCategoryId" value={{record.CategoryId}}>
     <div class="form-group row">
       <small class="col-auto"><span style="color: red;">*</span>必填欄位</small>
       <div class="col-sm-8 text-center">
@@ -33,8 +34,8 @@
       <div class="col-sm-9">
         <select id="category" class="form-control" name="categoryTitle">
           {{#each categories}}
-          <p>{{this._id}}</p>
-          <option {{#if (equal ../record.category this._id)}} selected {{/if}}>{{this.title}}</option>
+          <p>{{this.id}}</p>
+          <option {{#if (equal ../record.CategoryId this.id)}} selected {{/if}}>{{this.title}}</option>
           {{/each}}
         </select>
       </div>

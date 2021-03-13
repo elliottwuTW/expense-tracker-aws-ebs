@@ -56,9 +56,9 @@
   {{#if records}}
   {{#each records}}
   {{#if (gteZero this.amount)}}
-  <li class="list-group-item record income" data-id={{ this._id }}>
+  <li class="list-group-item record income" data-id={{ this.id }}>
     {{else}}
-  <li class="list-group-item record expense" data-id={{ this._id }}>
+  <li class="list-group-item record expense" data-id={{ this.id }}>
     {{/if}}
     <div class="row justify-content-between">
       <div class="col-sm-7 d-flex">
@@ -74,7 +74,7 @@
         </div>
       </div>
       <div class="col-sm-5 d-flex align-items-center justify-content-end">
-        <a class="btn btn-outline-secondary mx-2" href="/records/{{ this._id }}/edit" style="border: none;">
+        <a class="btn btn-outline-secondary mx-2" href="/records/{{ this.id }}/edit" style="border: none;">
           <i class="far fa-edit"></i>
         </a>
         <button class="btn btn-outline-danger delete" style="border: none;">

@@ -155,7 +155,7 @@ function renderRecords (records) {
   } else {
     records.forEach(record => {
       recordPanel.innerHTML += `
-      <li class="list-group-item record ${record.amount >= 0 ? 'income' : 'expense'}" data-id=${record._id}>
+      <li class="list-group-item record ${record.amount >= 0 ? 'income' : 'expense'}" data-id=${record.id}>
         <div class="row justify-content-between">
           <div class="col-sm-7 d-flex">
             <div class="d-flex justify-content-center align-items-center" style="width: 40px; transform: scale(0.9);">
@@ -171,7 +171,7 @@ function renderRecords (records) {
           </div>
 
           <div class="col-sm-5 d-flex align-items-center justify-content-end">
-            <a class="btn btn-outline-secondary mx-2" href="/records/${record._id}/edit" style="border: none;">
+            <a class="btn btn-outline-secondary mx-2" href="/records/${record.id}/edit" style="border: none;">
               <i class="far fa-edit"></i>
             </a>
             <button class="btn btn-outline-danger delete" style="border: none;">
