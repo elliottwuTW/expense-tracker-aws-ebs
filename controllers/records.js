@@ -1,18 +1,20 @@
-const { getCategoriesExclusiveType } = require('../db/Categories')
-const { getRecordsByGSI } = require('../db/Records')
+const { getCategoriesExclusiveType, getCategoryByTitle } = require('../db/Categories')
+const { getRecordsByUserIdDateIndex, createRecord } = require('../db/Records')
 
-const buildCategories = require('../utils/buildCategories')
+const reconstructCategories = require('../utils/reconstructCategories')
 const recordsTotalAmount = require('../utils/recordsTotalAmount')
+const isEmpty = require('../utils/isEmpty')
 
 // Get monthly records
 exports.getMonthlyRecords = (req, res, next) => {
-  getRecordsByGSI(res.queryParams)
+  getRecordsByUserIdDateIndex(res.queryParams)
     .then(recordData => {
       console.log('recordData: ', recordData)
       const records = recordData.Items
+      const totalAmount = recordsTotalAmount(records)
 
       // Get corresponding categories by type
-      let exclusiveType = 'empty'
+      let exclusiveType
       if (req.query.type === 'expense') {
         exclusiveType = 'income'
       } else if (req.query.type === 'income') {
@@ -20,30 +22,20 @@ exports.getMonthlyRecords = (req, res, next) => {
       }
       getCategoriesExclusiveType(exclusiveType)
         .then(categoryData => {
-          console.log('categoryData: ', categoryData)
           const categories = categoryData.Items
-          buildCategories(categories, 'all')
+          // if exclusiveType, may be unsorted
+          if (exclusiveType) { reconstructCategories(categories, 'keepAll') }
           console.log('categories: ', categories)
 
-          // Response
-          if (req.xhr) {
-            // ajax request
-            return res.json({
-              status: 'success',
-              data: { records, categories }
-            })
-          } else {
-            // browser request
-            const totalAmount = recordsTotalAmount(records)
-            return res.render('index', {
-              records,
-              totalAmount,
-              categories,
-              categoryValue: res.views.categoryValue,
-              period: res.views.period,
-              duration: res.views.duration
-            })
-          }
+          return res.render('index', {
+            records,
+            totalAmount,
+            categories,
+            categoryValue: res.views.categoryValue,
+            period: res.views.period,
+            type: res.views.type,
+            duration: res.views.duration
+          })
         })
         .catch(next)
     })
@@ -52,57 +44,62 @@ exports.getMonthlyRecords = (req, res, next) => {
 
 // Get the page that create a new expense
 exports.getNewExpensePage = (req, res, next) => {
-  // Category.find({ type: { $ne: 'income' } })
-  //   .lean()
-  //   .sort({ _id: 'asc' })
-  //   .then((categories) => {
-  //     buildCategories(categories)
-  //     return res.render('new', {
-  //       today: new Date(),
-  //       categories: categories.map((category) => category.title),
-  //       isIncome: false
-  //     })
-  //   })
-  //   .catch(next)
+  getCategoriesExclusiveType('income')
+    .then(data => {
+      const categories = data.Items
+      reconstructCategories(categories)
+
+      return res.render('new', {
+        today: (new Date()).toISOString(),
+        categories: categories.map((category) => category.title),
+        isIncome: false
+      })
+    })
+    .catch(next)
 }
 
 // Get the page that create a new income
 exports.getNewIncomePage = (req, res, next) => {
-  // Category.find({ type: { $ne: 'expense' } })
-  //   .lean()
-  //   .sort({ _id: 'asc' })
-  //   .then((categories) => {
-  //     buildCategories(categories)
-  //     return res.render('new', {
-  //       today: new Date(),
-  //       categories: categories.map((category) => category.title),
-  //       isIncome: true
-  //     })
-  //   })
-  //   .catch(next)
+  getCategoriesExclusiveType('expense')
+    .then(data => {
+      const categories = data.Items
+      reconstructCategories(categories)
+
+      return res.render('new', {
+        today: (new Date()).toISOString(),
+        categories: categories.map((category) => category.title),
+        isIncome: true
+      })
+    })
+    .catch(next)
 }
 
 // Add a record
 exports.createRecord = (req, res, next) => {
-  // const { name, date, categoryTitle, merchant } = req.body
-  // const isIncome = (req.body.isIncome === 'true')
-  // let amount = req.body.amount
-  // if (!isIncome) { amount = '-' + amount }
+  const { name, date, categoryTitle, merchant } = req.body
+  const isIncome = (req.body.isIncome === 'true')
+  let amount = req.body.amount
+  if (!isIncome) { amount = '-' + amount }
 
-  // Category.findOne({ title: categoryTitle })
-  //   .then((category) => {
-  //     return Record.create({
-  //       name,
-  //       date,
-  //       merchant,
-  //       amount,
-  //       category: category._id,
-  //       user: req.user._id,
-  //       isIncome
-  //     })
-  //   })
-  //   .then(res.redirect('/'))
-  //   .catch(next)
+  getCategoryByTitle(categoryTitle)
+    .then(data => {
+      if (isEmpty(data.Items)) return next(new Error('no such category'))
+      const category = data.Items[0]
+      const recordInfo = {
+        name,
+        // date: yyyy-mm-dd
+        date: (new Date(date)).toISOString(),
+        merchant,
+        amount,
+        CategoryId: category.id,
+        UserId: req.user.id,
+        isIncome
+      }
+      createRecord(recordInfo)
+        .then(res.redirect('/'))
+        .catch(next)
+    })
+    .catch(next)
 }
 
 // Get the page that has a specific record
@@ -113,7 +110,7 @@ exports.getRecordPage = (req, res, next) => {
   //     const type = record.isIncome ? { $ne: 'expense' } : { $ne: 'income' }
   //     return Category.find({ type }).lean().sort({ _id: 'asc' })
   //       .then(categories => {
-  //         buildCategories(categories)
+  //         reconstructCategories(categories)
   //         return res.render('edit', { record, categories, isIncome: record.isIncome })
   //       })
   //   })

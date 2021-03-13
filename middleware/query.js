@@ -8,7 +8,7 @@ module.exports = (req, res, next) => {
   const params = {}
 
   // read the setting
-  const type = req.query.type
+  const type = req.query.type || 'all'
   const period = req.query.period || (req.cookies.history ? req.cookies.history.period : null) || getThisMonth()
   const categoryValue = req.query.categoryValue || (req.cookies.history ? req.cookies.history.categoryValue : null) || 'all'
 
@@ -49,6 +49,7 @@ module.exports = (req, res, next) => {
       // parameters for render
       res.views = {}
       res.views.period = period
+      res.views.type = type
       res.views.categoryValue = categoryValue
       res.views.duration = { minDate, maxDate }
       next()

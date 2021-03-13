@@ -1,6 +1,6 @@
 {{!-- 顯示總金額、設定篩選條件 --}}
 {{> message}}
-<form id="filter">
+<form id="/records">
   <div class="row align-items-center justify-content-between m-2">
     <div class="col-md-3 align-items-center d-flex p-0">
       <span class="mr-2">結餘: </span>
@@ -15,14 +15,25 @@
       <div class="col-sm-4 p-0">
         <div class="d-flex align-items-center">
           <i class="far fa-clock mx-2"></i>
-          <input type="month" class="custom-select" name="period" value="{{this.period}}">
+          <input type="month" class="custom-select" name="period" value="{{period}}" onchange="this.form.submit()">
+        </div>
+      </div>
+      {{!-- 型態 --}}
+      <div class="col-sm-3 p-0">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-tag mx-2"></i>
+          <select class="custom-select" name="type" onchange="this.form.submit()">
+            <option value="all" {{#if (equal type 'all' )}} selected {{/if}}>全部</option>
+            <option value="expense" {{#if (equal type 'expense' )}} selected {{/if}}>支出</option>
+            <option value="income" {{#if (equal type 'income' )}} selected {{/if}}>收入</option>
+          </select>
         </div>
       </div>
       {{!-- 類別 --}}
       <div class="col-sm-3 p-0">
         <div class="d-flex align-items-center">
           <i class="fas fa-tag mx-2"></i>
-          <select class="custom-select" name="categoryValue" id="category-tag">
+          <select class="custom-select" name="categoryValue" id="category-tag" onchange="this.form.submit()">
             {{#each categories}}
             <option value="{{this.value}}" {{#if (equal ../categoryValue this.value)}} selected {{/if}}>
               {{this.title}}</option>
@@ -37,11 +48,6 @@
 <div class="row align-items-center justify-content-between m-2">
   <div class="col-md-6 my-1 p-0">📅
     <h5 class="m-0 duration" style="display: inline;">{{formatDuration duration}}</h5>
-  </div>
-  <div class="col-md-6 d-flex my-1 p-0" id="type-panel">
-    <button class="type btn active" id="all">全部</button>
-    <button class="type btn" id="expense">支出</button>
-    <button class="type btn" id="income">收入</button>
   </div>
 </div>
 
