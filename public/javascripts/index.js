@@ -9,6 +9,7 @@ const categoryTag = getElem('#category-tag')
 const loader = getElem('.loader-wrapper')
 
 document.addEventListener('DOMContentLoaded', function () {
+  console.log('click')
   // delete the record
   if (recordPanel) {
     // event delegation
