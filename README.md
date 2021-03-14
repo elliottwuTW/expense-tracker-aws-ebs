@@ -1,6 +1,6 @@
 ## Expense Tracker
 
-An expense tracker app that can manage your wallet.
+An expense tracker app that can manage your wallet deployed by AWS Elastic Beanstalk.
 
 ### Main Page
 ![](https://raw.githubusercontent.com/elliottwuTW/expense-tracker-app/master/project_picture.png)
@@ -15,7 +15,7 @@ Users can
 - logout accounts
 - see the duration of records by month
 - create a new expense/income record
-- browse the records by filtering record type, time, category, or the way of sorting
+- browse the records by filtering record type, time, category
 - update a specific record
 - delete a specific record
 - see the balance by month
@@ -23,49 +23,19 @@ Users can
 
 ### Demo
 
-[廣志の私帳](https://expense-tracker-elliottwu.herokuapp.com/)
+[廣志の私帳](http://expense-tracker.tk/)
 
 ### Mock Account
 
 - email: user@example.com
 - password: 12345678
 
-### Usage
-
-```bash
-# Create a project folder to start
-mkdir <project-folder>
-cd <project-folder>
-
-# Clone the project
-git clone https://github.com/elliottwuTW/expense-tracker-app.git
-
-# Install all dependencies
-npm install
-
-# Follow .env.example to setup your .env
-touch .env
-
-# Setup your mongodb and check connection
-node ./config/mongoose.js
-
-# Generate the seed data
-npm run seed
-
-# Run the Express server
-npm run start
-
-# Or run the server with nodemon
-npm run dev
-```
-
 ### Package Version
 
 - Node.js : 14.4.0
+- aws-sdk : 2.860.0
 - express : 4.17.1
 - express-handlebars : 5.1.0
-- mongoose : 5.10.9
-- migrate-mongo : 8.1.4
 - passport : 0.4.1
 
 ### App Info
@@ -76,4 +46,4 @@ npm run dev
 
 #### Version
 
-1.2.0
+1.0.0
