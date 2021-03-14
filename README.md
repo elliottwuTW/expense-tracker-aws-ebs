@@ -3,7 +3,7 @@
 An expense tracker app that can manage your wallet deployed by AWS Elastic Beanstalk.
 
 ### Main Page
-![](https://raw.githubusercontent.com/elliottwuTW/expense-tracker-app/master/project_picture.png)
+![](https://raw.githubusercontent.com/elliottwuTW/expense-tracker-aws-ebs/master/project_picture.png)
 
 ### Features
 
